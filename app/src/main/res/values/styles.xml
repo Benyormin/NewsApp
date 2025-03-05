@@ -1,0 +1,25 @@
+<!-- res/values/styles.xml -->
+<resources>
+    <!-- Custom button style -->
+    <style name="CustomButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/Secondary</item> <!-- Background color -->
+        <item name="android:textColor">@color/black</item> <!-- Text color -->
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">8dp</item> <!-- Rounded corners -->
+    </style>
+
+    <!-- Custom Bottom Navigation Style -->
+    <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <!-- Background color -->
+        <item name="android:background">@color/Primary</item>
+
+        <!-- Active tab color -->
+        <item name="itemIconTint">@drawable/bottom_nav_icon_tint</item>
+        <item name="itemTextColor">@drawable/bottom_nav_text_tint</item>
+    </style>
+    <style name="CustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item> <!-- Disable all caps -->
+        <item name="android:textSize">12sp</item> <!-- Set text size (optional) -->
+    </style>
+
+</resources>
