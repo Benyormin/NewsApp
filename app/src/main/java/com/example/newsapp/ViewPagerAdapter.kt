@@ -1,8 +1,8 @@
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.newsapp.Cat1Fragment
-import com.example.newsapp.ForUFragment
+import com.example.newsapp.view.Cat1Fragment
+import com.example.newsapp.view.ForUFragment
 import com.example.newsapp.TabItem
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity,

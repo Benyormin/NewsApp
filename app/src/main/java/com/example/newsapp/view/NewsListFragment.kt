@@ -1,44 +1,37 @@
-package com.example.newsapp
+package com.example.newsapp.view
 
+import com.example.newsapp.viewmodel.NewsViewModel
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.databinding.FragmentNewsListBinding
-import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
-import retrofit2.Response
-import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.Callback
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import okhttp3.logging.HttpLoggingInterceptor.Level
+
 class NewsListFragment : Fragment() {
 
     private var _binding: FragmentNewsListBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var viewModel: NewsViewModel
     private lateinit var category: String
 
     // Key for passing category as an argument
@@ -64,6 +57,10 @@ class NewsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize ViewModel
+        viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
+
         swipeRefreshLayout = binding.swipeRefreshLayout
 
         // Get the category from arguments
@@ -72,11 +69,25 @@ class NewsListFragment : Fragment() {
             swipeRefreshLayout.isRefreshing = true
             loadNews(category)
         }
-        loadNews(category)
+
+        //loadNews(category)
+
+        // Observe news data for this category
+        viewModel.newsData.observe(viewLifecycleOwner) { newsMap ->
+            val articles = newsMap[category] ?: emptyList()
+            val adapter = NewsAdapter(articles)
+            binding.rvNews.adapter = adapter
+            binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
+        }
 
     }
 
     private fun loadNews(category: String) {
+        viewModel.fetchNewsForCategory(category)
+        swipeRefreshLayout.isRefreshing = false
+
+    }
+  /*  private fun loadNews(category: String) {
         // Show loading spinner
         swipeRefreshLayout.isRefreshing = true
 
@@ -121,7 +132,9 @@ class NewsListFragment : Fragment() {
                 swipeRefreshLayout.isRefreshing = false
             }
         }
-    }
+    }*/
+
+
     /* private fun loadNews(category: String) {
 
     /*    val logging = HttpLoggingInterceptor().apply {

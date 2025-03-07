@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,5 +82,14 @@ dependencies {
     // LifecycleScope
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
+
+
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+
+    implementation("androidx.room:room-ktx:$room_version")
 
 }
