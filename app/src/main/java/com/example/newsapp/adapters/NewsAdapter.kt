@@ -36,6 +36,14 @@ class NewsAdapter (private val newsDataList: List<NewsData>)
         val rvimage: ImageView = itemView.findViewById(R.id.ivNews)
         val rvTitle: TextView = itemView.findViewById(R.id.tvNewsTitle)
 
+        val rvDes: TextView = itemView.findViewById(R.id.articleDescription)
+        val rvSource: TextView = itemView.findViewById(R.id.articleSource)
+        val rvDateTime: TextView = itemView.findViewById(R.id.articleDateTime)
+        val rvLike: ImageView = itemView.findViewById(R.id.ivLike)
+        val rvBookmark: ImageView = itemView.findViewById(R.id.ivBookmark)
+        val rvShare: ImageView = itemView.findViewById(R.id.ivShare)
+
+
 
         fun bind(article: NewsData) {
             rvTitle.text = article.title
@@ -49,6 +57,24 @@ class NewsAdapter (private val newsDataList: List<NewsData>)
                 // Set a placeholder image if no image is available
                 rvimage.setImageResource(R.drawable.news)
             }
+
+            if( article.description != null){
+                rvDes.text = article.description
+            } else{
+                rvDes.text = ""
+            }
+            if (article.source != null) {
+                rvSource.text = article.source
+            } else {
+                rvSource.text = ""
+            }
+            if (article.publishedAt != null) {
+                rvDateTime.text = article.publishedAt
+            } else {
+                rvDateTime.text = "  "
+
+            }
+
         }
 
     }
