@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.model.NewsData
+import com.example.newsapp.utils.HelperFuncitons
 
 class NewsAdapter (private val newsDataList: List<NewsData>)
     : RecyclerView.Adapter<NewsAdapter.MyViewHolder>(){
@@ -63,13 +64,13 @@ class NewsAdapter (private val newsDataList: List<NewsData>)
             } else{
                 rvDes.text = ""
             }
-            if (article.source != null) {
-                rvSource.text = article.source
+            if (article.source.name != null) {
+                rvSource.text = article.source.name
             } else {
                 rvSource.text = ""
             }
             if (article.publishedAt != null) {
-                rvDateTime.text = article.publishedAt
+                rvDateTime.text = HelperFuncitons.getRelativeTimeAndroid(article.publishedAt)
             } else {
                 rvDateTime.text = "  "
 

@@ -83,7 +83,12 @@ class NewsListFragment : Fragment() {
     }
 
     private fun loadNews(category: String) {
-        viewModel.fetchNewsForCategory(category)
+        if(category == "football"){
+            viewModel.fetchGuardianNews("football")
+        }else{
+            viewModel.fetchNewsForCategory(category)
+        }
+
         swipeRefreshLayout.isRefreshing = false
 
     }
