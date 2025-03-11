@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.databinding.FragmentNewsListBinding
+import com.example.newsapp.model.NewsData
 
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -65,25 +67,64 @@ class NewsListFragment : Fragment() {
 
         // Get the category from arguments
         val category = arguments?.getString(ARG_CATEGORY) ?: "Unknown"
+        loadNews(category)
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
             loadNews(category)
         }
 
-        //loadNews(category)
 
+
+        observeData(category)
+        /*
         // Observe news data for this category
         viewModel.newsData.observe(viewLifecycleOwner) { newsMap ->
+            if(newsMap.isNullOrEmpty()){
+                Toast.makeText(requireContext(), "Empty News Api", Toast.LENGTH_SHORT).show()
+
+            }
             val articles = newsMap[category] ?: emptyList()
             val adapter = NewsAdapter(articles)
             binding.rvNews.adapter = adapter
             binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
         }
 
+
+        viewModel.guardianNewsData.observe(viewLifecycleOwner){
+            it ->
+            if (it.isNullOrEmpty()){
+                Toast.makeText(requireContext(), "Empty guardian news!", Toast.LENGTH_SHORT).show()
+            }
+            val adapter = NewsAdapter(it)
+            binding.rvNews.adapter = adapter
+            binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
+
+        }
+*/
+    }
+
+    private fun observeData(category: String) {
+        if( category == "Football"){
+            viewModel.guardianNewsData.observe(viewLifecycleOwner){
+                it ->
+                if (it.isNullOrEmpty()){
+                    Toast.makeText(requireContext(), "Empty guardian news!", Toast.LENGTH_SHORT).show()
+                }
+                updateRecyclerView(it)
+            }
+        }
+        else{
+            viewModel.newsData.observe(viewLifecycleOwner){
+                it ->
+                val articles = it[category]?: emptyList()
+                updateRecyclerView(articles)
+            }
+        }
+
     }
 
     private fun loadNews(category: String) {
-        if(category == "football"){
+        if(category == "Football"){
             viewModel.fetchGuardianNews("football")
         }else{
             viewModel.fetchNewsForCategory(category)
@@ -92,127 +133,12 @@ class NewsListFragment : Fragment() {
         swipeRefreshLayout.isRefreshing = false
 
     }
-  /*  private fun loadNews(category: String) {
-        // Show loading spinner
-        swipeRefreshLayout.isRefreshing = true
 
-        // Launch a coroutine tied to the fragment's lifecycle
-        lifecycleScope.launch {
-            try {
-                // Create Retrofit instance
-                val unsafeHttpClient = OkHttpClient.Builder()
-                    .sslSocketFactory(createInsecureSslSocketFactory(), InsecureTrustManager())
-                    .hostnameVerifier { _, _ -> true }
-                    .addInterceptor(HttpLoggingInterceptor().apply { level = Level.BODY })
-                    .build()
-
-                val retrofit = Retrofit.Builder()
-                    .baseUrl("https://newsapi.org/v2/")
-                    .client(unsafeHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-
-                // Create API service
-                val newsApiService = retrofit.create(NewsApiService::class.java)
-
-                // Make the API call (suspend function)
-                val response = newsApiService.getNewsByCategory(category, Constants.NEWS_KEY)
-
-                // Check if the response is successful
-                if (response.isSuccessful) {
-                    val articles = response.body()?.articles ?: emptyList()
-                    val adapter = NewsAdapter(articles)
-                    binding.rvNews.adapter = adapter
-                    binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
-                } else {
-                    // Handle API error
-                    Toast.makeText(requireContext(), "Failed to fetch news", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                // Handle network or other errors
-                Log.e("NETWORK_ERROR", "Failed to fetch news: ${e.message}")
-                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
-            } finally {
-                // Hide loading spinner
-                swipeRefreshLayout.isRefreshing = false
-            }
-        }
-    }*/
-
-
-    /* private fun loadNews(category: String) {
-
-    /*    val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
-    */
-
-
-        val unsafeHttpClient = OkHttpClient.Builder()
-            .sslSocketFactory(createInsecureSslSocketFactory(), InsecureTrustManager())
-            .hostnameVerifier { _, _ -> true }
-            .addInterceptor(HttpLoggingInterceptor().apply { level = Level.BODY })
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://newsapi.org/v2/")
-            .client(unsafeHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val newsApiService = retrofit.create(NewsApiService::class.java)
-
-        val call = newsApiService.getNewsByCategory(category, Constants.NEWS_KEY)
-
-
-        call.enqueue(object : Callback<NewsResponse> {
-            override fun onResponse(call: Call<NewsResponse>, response: Response<NewsResponse>) {
-                if (response.isSuccessful) {
-                    val articles = response.body()?.articles ?: emptyList()
-                    val adapter = NewsAdapter(articles)
-                    binding.rvNews.adapter = adapter
-                    binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
-                } else {
-                    // Handle API error
-                    Toast.makeText(requireContext(), "Failed to fetch news", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                // Handle network error
-                // Handle network errors (e.g., no internet)
-                Log.e("NETWORK_ERROR", "Failed to fetch news: ${t.message}")
-                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
-            }
-        })
-
-        swipeRefreshLayout.isRefreshing = false
-    }
-*/
-
-    /* private fun loadNewsForCategory(category: String) {
-         // TODO: Load news for the given category
-         // For example, you can call an API or fetch data from a database
-         binding.textViewCategory.text = "News for $category"
-     }
- */
-    // TODO: recyclerView
-/*
-    private fun loadNewsForCategory(category: String) {
-        // Example: Fetch news for the category
-        //val newsList = fetchNewsFromApi(category)
-
-        val newsList = NewsArticle.createData(requireContext())
-        // Example: Display news in a RecyclerView
-        val adapter = NewsAdapter(newsList)
+    private fun updateRecyclerView(article: List<NewsData>){
+        val adapter = NewsAdapter(article)
         binding.rvNews.adapter = adapter
         binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
     }
-*/
-
 
     override fun onDestroyView() {
         super.onDestroyView()

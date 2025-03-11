@@ -1,6 +1,7 @@
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.bumptech.glide.load.engine.Resource
 import com.example.newsapp.api.GuardianApiService
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.api.NewsApiService
@@ -25,6 +26,7 @@ class NewsRepository(
             if (response.isSuccessful) {
                 response.body()?.articles ?: emptyList()
             } else {
+                Log.e("REPOSITORY_ERROR", "Failed to fetch news from APInews \n: ${response.code()}")
                 emptyList()
             }
         } catch (e: Exception) {
@@ -55,23 +57,24 @@ class NewsRepository(
      */
     suspend fun getGuardianNews(section: String = "football"): List<NewsData>{
         return try {
-            val response = guardianService.getGuardianNews(section)
+            val response = guardianService.getGuardianNews(section = section, apiKey = Constants.GAURDIAN_KEY)
             if(response.isSuccessful){
                 response.body()?.response?.results?.map { ga ->
                     NewsData(
                         title = ga.fields.headline,
-                        description = ga.fields.description,
-                        imageUrl = ga.fields.imageUrl,
+                        description = ga.fields.description?:" ",
+                        imageUrl = ga.fields.imageUrl?:" ",
                         articleUrl = ga.url,
                         publishedAt = ga.publishedDate,
-                        source = Source("-1", "Guardian")
+                        source = Source("-1", "The Guardian")
                     )
 
                 }?: emptyList()
 
             }else{
+                Log.e("GUARDIAN_ERROR", "not successful")
                 emptyList()
-            }
+                }
 
         }
         catch (e:Exception){

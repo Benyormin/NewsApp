@@ -7,6 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.newsapp.R
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.utils.HelperFuncitons
@@ -53,6 +55,9 @@ class NewsAdapter (private val newsDataList: List<NewsData>)
             if (article.imageUrl != null) {
                 Glide.with(itemView.context)
                     .load(article.imageUrl)
+                    .apply(RequestOptions()
+                        .placeholder(R.drawable.news)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL))
                     .into(rvimage)
             } else {
                 // Set a placeholder image if no image is available
