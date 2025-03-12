@@ -6,7 +6,7 @@
         android:icon="@drawable/home"
         android:title="Home" />
     <item
-        android:id="@+id/exploreFragment"
+        android:id="@+id/searchFragment"
         android:icon="@drawable/search_24dp"
         android:title="Search" />
     <item
@@ -14,7 +14,7 @@
         android:icon="@drawable/bookmarks_24dp"
         android:title="Bookmarks" />
     <item
-        android:id="@+id/profileFragment"
+        android:id="@+id/settingFragment"
         android:icon="@drawable/settings_24dp"
         android:title="Setting" />
 </menu>

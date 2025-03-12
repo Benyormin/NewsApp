@@ -1,5 +1,6 @@
 package com.example.newsapp.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,8 @@ import com.example.newsapp.R
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.utils.HelperFuncitons
 
-class NewsAdapter (private val newsDataList: List<NewsData>)
+class NewsAdapter (private val newsDataList: List<NewsData>,
+                   private val onItemClick: (String) -> Unit )
     : RecyclerView.Adapter<NewsAdapter.MyViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -80,6 +82,16 @@ class NewsAdapter (private val newsDataList: List<NewsData>)
                 rvDateTime.text = "  "
 
             }
+            if(article.articleUrl == null){
+                Log.e("NewsAdapter", "URL is null")
+            }else{
+                Log.d("NewsAdapter", "URL is fetched: ${article.articleUrl}")
+            }
+
+
+        itemView.setOnClickListener {
+            onItemClick(article.articleUrl)
+        }
 
         }
 

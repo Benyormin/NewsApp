@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import android.widget.Toast
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.adapters.NewsAdapter
@@ -76,31 +78,7 @@ class NewsListFragment : Fragment() {
 
 
         observeData(category)
-        /*
-        // Observe news data for this category
-        viewModel.newsData.observe(viewLifecycleOwner) { newsMap ->
-            if(newsMap.isNullOrEmpty()){
-                Toast.makeText(requireContext(), "Empty News Api", Toast.LENGTH_SHORT).show()
 
-            }
-            val articles = newsMap[category] ?: emptyList()
-            val adapter = NewsAdapter(articles)
-            binding.rvNews.adapter = adapter
-            binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
-        }
-
-
-        viewModel.guardianNewsData.observe(viewLifecycleOwner){
-            it ->
-            if (it.isNullOrEmpty()){
-                Toast.makeText(requireContext(), "Empty guardian news!", Toast.LENGTH_SHORT).show()
-            }
-            val adapter = NewsAdapter(it)
-            binding.rvNews.adapter = adapter
-            binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
-
-        }
-*/
     }
 
     private fun observeData(category: String) {
@@ -135,7 +113,19 @@ class NewsListFragment : Fragment() {
     }
 
     private fun updateRecyclerView(article: List<NewsData>){
-        val adapter = NewsAdapter(article)
+        var adapter = NewsAdapter(article) { url ->
+            if(url == null){
+                Log.e("NewsListFragment", "URL is null")
+                Toast.makeText(requireContext(), "Url is null", Toast.LENGTH_SHORT).show()
+            }else{
+                Log.d("NewsListFragment", "Navigating to ArticleFragment with URL: $url")
+                val action = HomeFragmentDirections.actionHomeFragmentToArticleFragment(url)
+                findNavController().navigate(action)
+            }
+            // Navigate to ArticleFragment using Safe Args
+
+        }
+        //val adapter = NewsAdapter(article)
         binding.rvNews.adapter = adapter
         binding.rvNews.layoutManager = LinearLayoutManager(requireContext())
     }

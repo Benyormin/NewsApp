@@ -19,7 +19,7 @@ class NewsData (
     @SerializedName("urlToImage") val imageUrl: String?,
     @SerializedName("description") val description: String?,
     @SerializedName("publishedAt") val publishedAt: String?,
-    @SerializedName("articleUrl") val articleUrl: String,
+    @SerializedName("url") val articleUrl: String,
     @SerializedName("source") val source: Source
 )
 

@@ -4,6 +4,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id ("androidx.navigation.safeargs.kotlin")
     kotlin("plugin.serialization") version "2.0.21"
 
 }
@@ -104,8 +105,12 @@ dependencies {
     // Views/Fragments integration
     implementation("androidx.navigation:navigation-fragment:$nav_version")
     implementation("androidx.navigation:navigation-ui:$nav_version")
+    implementation ("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation ("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
 
     //for getting time
 
     implementation ("commons-net:commons-net:3.8.0")
+    //navigation component
+
 }
