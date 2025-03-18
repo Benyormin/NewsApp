@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -83,13 +84,33 @@ class NewsListFragment : Fragment() {
 
     private fun observeData(category: String) {
         if( category == "Football"){
+
+            viewModel.footballData.observe(viewLifecycleOwner){
+                it ->
+                if(!it.isNullOrEmpty()){
+                    updateRecyclerView(it)
+                }else{
+                    Toast.makeText(requireContext(), "Empty football news!", Toast.LENGTH_SHORT).show()
+                }
+            }
+            /*viewModel.rssItems.observe(viewLifecycleOwner){
+                it->
+                if(!it.isNullOrEmpty()){
+                    updateRecyclerView(it)
+                }
+            }
+            /*
             viewModel.guardianNewsData.observe(viewLifecycleOwner){
+
                 it ->
                 if (it.isNullOrEmpty()){
                     Toast.makeText(requireContext(), "Empty guardian news!", Toast.LENGTH_SHORT).show()
                 }
                 updateRecyclerView(it)
             }
+
+             */
+        */
         }
         else{
             viewModel.newsData.observe(viewLifecycleOwner){
@@ -103,7 +124,9 @@ class NewsListFragment : Fragment() {
 
     private fun loadNews(category: String) {
         if(category == "Football"){
-            viewModel.fetchGuardianNews("football")
+            viewModel.getFootballNews()
+            //viewModel.fetchGuardianNews("football")
+            //viewModel.fetchBbcSportNews()
         }else{
             viewModel.fetchNewsForCategory(category)
         }

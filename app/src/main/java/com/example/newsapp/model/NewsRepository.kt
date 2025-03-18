@@ -1,23 +1,23 @@
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.bumptech.glide.load.engine.Resource
+import com.example.newsapp.api.EspnApiService
 import com.example.newsapp.api.GuardianApiService
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
-import kotlin.text.Typography.section
 
 class NewsRepository(
     private val newsApiService: NewsApiService,
     private val guardianService: GuardianApiService,
+    private val EspnService: EspnApiService,
     private val context: Context
     ) {
 
+
     /**
      * rerutns a list of newsData form NewsAPI service
-     *
      *
      */
     suspend fun getNewsByCategory(category: String): List<NewsData> {
@@ -66,7 +66,7 @@ class NewsRepository(
                         imageUrl = ga.fields.imageUrl?:" ",
                         articleUrl = ga.url,
                         publishedAt = ga.publishedDate,
-                        source = Source("-1", "The Guardian")
+                        source =  Source("-1", "The Guardian")
                     )
 
                 }?: emptyList()
@@ -82,6 +82,47 @@ class NewsRepository(
             Toast.makeText(context, "Failed to fetch guardian news", Toast.LENGTH_SHORT).show()
             emptyList()
         }
+    }
+
+    suspend fun getRssNews(url: String, source: String): List<NewsData>
+    {
+        val rssRepository = RssRepository(url, source)
+        Log.d("News Repository","get ${source} news has been called")
+        return rssRepository.fetchRssNews()
+
+    }
+
+    suspend fun getEspnNews(): List<NewsData> {
+            return try {
+                //TODO: change the hardcoded text to changable like esp.1 eng.1 ,...
+                val response = EspnService.getEspnNews()
+                if(response.isSuccessful){
+                    response.body()?.article?.map {
+                        esp ->
+                        if (esp.links.web == null) {
+                            Log.w("ESPN", "Mobile link missing for article: ${esp.headline}")
+                        }
+                        NewsData(
+                            title = esp.headline,
+                            description = esp.description,
+                            imageUrl = esp.images[0].imageUrl?:"",
+                            articleUrl = esp.links.web?.articleUrl?: "",
+                            publishedAt = esp.published,
+                            source = Source("Espn", "Espn")
+                        )
+                    }?: emptyList()
+                }else{
+                    Log.e("ESPN_ERROR", "not successful")
+
+                    emptyList()
+                }
+
+
+            }catch (e: Exception){
+                Log.e("ESPN_ERROR", "Failed to fetch espn news: ${e.message}")
+                Toast.makeText(context, "Failed to fetch Espn news", Toast.LENGTH_SHORT).show()
+                emptyList()
+            }
     }
 
     //get sport news

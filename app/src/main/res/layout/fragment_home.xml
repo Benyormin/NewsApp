@@ -11,6 +11,7 @@
         android:id="@+id/tlCategories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -24,11 +25,12 @@
         app:tabIndicatorColor="@null"
         app:tabIndicatorGravity="stretch"
         app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/accent" />
+        app:tabSelectedTextColor="@color/accent"
+        app:tabTextColor="@color/gray"
+        />
 
         <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vpContent"
-
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

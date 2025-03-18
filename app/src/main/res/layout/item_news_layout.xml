@@ -10,6 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:background="@color/cardViewBackground"
         android:paddingBottom="5dp">
 
 
@@ -17,6 +19,8 @@
             android:id="@+id/ivNews"
             android:layout_width="160dp"
             android:layout_height="90dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="5dp"
             android:scaleType="centerCrop"
             android:src="@drawable/news"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,14 +30,16 @@
             android:id="@+id/articleSource"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
             android:text="Source"
-            android:textColor="@color/gray"
+            android:layout_marginTop="5dp"
+
+
+            android:textColor="@color/Secondary"
             android:textSize="12sp"
-
-
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivNews" />
+            app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
         <TextView
             android:id="@+id/tvNewsTitle"
@@ -44,7 +50,7 @@
             android:ellipsize="end"
             android:maxLines="3"
             android:text="TITLE"
-            android:textColor="@color/black"
+            android:textColor="@color/title"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toRightOf="@+id/ivNews"
@@ -60,7 +66,8 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="DESCRIPTION"
-            android:textColor="@color/gray"
+            android:textColor="@color/Secondary"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivNews"
             app:layout_constraintTop_toBottomOf="@+id/tvNewsTitle" />
@@ -70,66 +77,66 @@
             android:id="@+id/articleDateTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="27dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="7dp"
             android:padding="2dp"
+            android:layout_marginTop="5dp"
 
             android:text="3h"
-            android:textColor="@color/gray"
+            android:textColor="@color/Secondary"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/articleDescription"
-            app:layout_constraintVertical_bias="0.625" />
+            app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
         <ImageView
             android:id="@+id/ivLike"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="7dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="5dp"
             android:padding="1dp"
-            android:src="@drawable/fav"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/favorite_24dp_secondary"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintEnd_toStartOf="@+id/ivShare"
-            app:layout_constraintTop_toBottomOf="@+id/articleDescription"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
         <ImageView
             android:id="@+id/ivBookmark"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="22dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="7dp"
+            android:layout_marginTop="5dp"
             android:padding="1dp"
-            android:src="@drawable/bookmark"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/bookmark_24dp_secondary"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintEnd_toStartOf="@+id/articleDateTime"
-            app:layout_constraintTop_toBottomOf="@+id/articleDescription"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
         <ImageView
             android:id="@+id/ivShare"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="7dp"
+            android:layout_marginTop="5dp"
             android:padding="1dp"
-
-            android:src="@drawable/share_black"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/share_24dp_secondary"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintEnd_toStartOf="@+id/ivBookmark"
-            app:layout_constraintTop_toBottomOf="@+id/articleDescription"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="20dp" />
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="5dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="98dp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
