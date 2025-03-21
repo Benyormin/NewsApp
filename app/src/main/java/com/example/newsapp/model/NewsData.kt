@@ -20,7 +20,9 @@ class NewsData (
     @SerializedName("description") val description: String?,
     @SerializedName("publishedAt") val publishedAt: String?,
     @SerializedName("url") val articleUrl: String,
-    @SerializedName("source") val source: Source
+    @SerializedName("source") val source: Source,
+    var isBookmarked: Boolean = false,
+    var isLike: Boolean = false
 )
 
 data class Source(

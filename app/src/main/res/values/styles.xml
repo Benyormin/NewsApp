@@ -22,4 +22,19 @@
         <item name="android:textSize">12sp</item> <!-- Set text size (optional) -->
     </style>
 
+
+    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
+
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:queryBackground">@drawable/round_searchview</item>
+        <item name ="android:textColorHint">@color/gray</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">12sp</item>
+
+
+
+
+
+    </style>
+
 </resources>

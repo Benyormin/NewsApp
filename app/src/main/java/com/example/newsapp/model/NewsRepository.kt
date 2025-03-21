@@ -7,6 +7,8 @@ import com.example.newsapp.utils.Constants
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
+import kotlinx.coroutines.async
+import kotlin.text.Typography.section
 
 class NewsRepository(
     private val newsApiService: NewsApiService,
@@ -84,6 +86,35 @@ class NewsRepository(
         }
     }
 
+    suspend fun searchGuardianNews(query: String): List<NewsData>{
+        return try {
+            val response = guardianService.searchGuardianNews(query = query, apiKey = Constants.GAURDIAN_KEY)
+            if(response.isSuccessful){
+                response.body()?.response?.results?.map { ga ->
+                    NewsData(
+                        title = ga.fields.headline,
+                        description = ga.fields.description?:" ",
+                        imageUrl = ga.fields.imageUrl?:" ",
+                        articleUrl = ga.url,
+                        publishedAt = ga.publishedDate,
+                        source =  Source("-1", "The Guardian")
+                    )
+
+                }?: emptyList()
+
+            }else{
+                Log.e("GUARDIAN_ERROR", "not successful")
+                emptyList()
+            }
+
+        }
+        catch (e:Exception){
+            Log.e("GUARDIAN_ERROR", "Failed to fetch guardian news from search: ${e.message}")
+            Toast.makeText(context, "Failed to fetch guardian news from search query", Toast.LENGTH_SHORT).show()
+            emptyList()
+        }
+    }
+
     suspend fun getRssNews(url: String, source: String): List<NewsData>
     {
         val rssRepository = RssRepository(url, source)
@@ -124,6 +155,23 @@ class NewsRepository(
                 emptyList()
             }
     }
+
+
+    suspend fun searchNews(query: String): List<NewsData>{
+         val newsAPI =  getNewsByCategory(query)
+        //TODO:: Change the hard coded football section!
+         val guardian = searchGuardianNews(query)
+
+        val newsList = mutableListOf<NewsData>().apply {
+            addAll(newsAPI)
+            addAll(guardian)
+        }
+        if(newsList.isNotEmpty()){
+         return newsList
+        }
+        else return emptyList()
+    }
+
 
     //get sport news
 
