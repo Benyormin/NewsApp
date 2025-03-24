@@ -2,6 +2,9 @@ package com.example.newsapp.model
 
 
 import android.text.format.DateUtils
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -15,14 +18,14 @@ import java.util.TimeZone
 )
 class NewsData (
     @PrimaryKey(autoGenerate = true) var uid: Int? = null,
-    @SerializedName("title") val title: String,
-    @SerializedName("urlToImage") val imageUrl: String?,
-    @SerializedName("description") val description: String?,
-    @SerializedName("publishedAt") val publishedAt: String?,
-    @SerializedName("url") val articleUrl: String,
-    @SerializedName("source") val source: Source,
+    @ColumnInfo(name = "title") @SerializedName("title") val title: String,
+    @ColumnInfo(name = "imageUrl") @SerializedName("urlToImage") val imageUrl: String?,
+    @ColumnInfo(name = "description") @SerializedName("description") val description: String?,
+    @ColumnInfo(name = "Date") @SerializedName("publishedAt") val publishedAt: String?,
+    @ColumnInfo(name = "articleUrl") @SerializedName("url") val articleUrl: String,
+    @ColumnInfo(name = "source") @SerializedName("source") val source: Source,
     var isBookmarked: Boolean = false,
-    var isLike: Boolean = false
+    @ColumnInfo(name = "isLike") var isLike: Boolean = false
 )
 
 data class Source(

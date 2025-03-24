@@ -1,10 +1,14 @@
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+
 import com.example.newsapp.api.EspnApiService
 import com.example.newsapp.api.GuardianApiService
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.api.NewsApiService
+import com.example.newsapp.db.ArticlesDAO
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
 import kotlinx.coroutines.async
@@ -14,8 +18,23 @@ class NewsRepository(
     private val newsApiService: NewsApiService,
     private val guardianService: GuardianApiService,
     private val EspnService: EspnApiService,
+    private val dao: ArticlesDAO,
     private val context: Context
     ) {
+
+
+    val bookmarkedArticles: LiveData<List<NewsData>> = dao.getBookmarkedArticles()
+    suspend fun upsert(article: NewsData) = dao.upsert(article)
+
+    suspend fun updateBookmark(article: NewsData) {
+        Log.d("Bookmark", "News Repo: updateBookmark has been called")
+        //article.isBookmarked = !article.isBookmarked
+        Log.d("Bookmark", "News Repo: article.isbookmarked = ${article.isBookmarked}")
+        //dao.updateArticle(article)
+        dao.upsert(article)
+    }
+
+    suspend fun deleteArticle(article: NewsData) = dao.deleteArticle(article)
 
 
     /**

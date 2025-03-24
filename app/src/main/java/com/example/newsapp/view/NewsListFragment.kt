@@ -135,19 +135,28 @@ class NewsListFragment : Fragment() {
 
     }
 
-    private fun updateRecyclerView(article: List<NewsData>){
-        var adapter = NewsAdapter(article) { url ->
-            if(url == null){
-                Log.e("NewsListFragment", "URL is null")
-                Toast.makeText(requireContext(), "Url is null", Toast.LENGTH_SHORT).show()
-            }else{
-                Log.d("NewsListFragment", "Navigating to ArticleFragment with URL: $url")
-                val action = HomeFragmentDirections.actionHomeFragmentToArticleFragment(url)
-                findNavController().navigate(action)
-            }
-            // Navigate to ArticleFragment using Safe Args
+    private fun updateRecyclerView(articles: List<NewsData>){
+        var adapter = NewsAdapter(articles,
+            onBookmarkClick = {
+                article ->
+                Log.d("Bookmark", "onBookmarkClick running...")
+                viewModel.toggleBookmark(article)
+            },
+            onItemClick = { url ->
+                if(url == null){
+                    Log.e("NewsListFragment", "URL is null")
+                    Toast.makeText(requireContext(), "Url is null", Toast.LENGTH_SHORT).show()
+                }else{
+                    Log.d("NewsListFragment", "Navigating to ArticleFragment with URL: $url")
+                    val action = HomeFragmentDirections.actionHomeFragmentToArticleFragment(url)
+                    findNavController().navigate(action)
+                }
+                // Navigate to ArticleFragment using Safe Args
 
-        }
+            }
+            )
+
+
         //val adapter = NewsAdapter(article)
         binding.rvNews.adapter = adapter
         binding.rvNews.layoutManager = LinearLayoutManager(requireContext())

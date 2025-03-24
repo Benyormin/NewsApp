@@ -15,9 +15,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.newsapp.R
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.utils.HelperFuncitons
+import com.example.newsapp.viewmodel.NewsViewModel
 
 class NewsAdapter (private var newsDataList: List<NewsData>,
-                   private val onItemClick: (String) -> Unit )
+                   private val onItemClick: (String) -> Unit,
+                   private val onBookmarkClick: (NewsData) ->Unit
+    )
     : RecyclerView.Adapter<NewsAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -93,7 +96,7 @@ class NewsAdapter (private var newsDataList: List<NewsData>,
                 Log.d("NewsAdapter", "URL is fetched: ${article.articleUrl}")
             }
 
-
+            Log.d("NewsAdapter", "here")
             updateBookmarkIcon(article.isBookmarked)
             updateLikeIcon(article.isLike)
 
@@ -105,9 +108,14 @@ class NewsAdapter (private var newsDataList: List<NewsData>,
             }
             rvBookmark.setOnClickListener {
                 article.isBookmarked = !article.isBookmarked
+                Log.d("Bookmark", "running onclick listener func")
+                onBookmarkClick(article)
+                Log.d("Bookmark", "after on click")
                 updateBookmarkIcon(article.isBookmarked)
                 if(article.isBookmarked)
-                    Toast.makeText(itemView.context, "Saved !", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(itemView.context, "Saved to bookmarks!", Toast.LENGTH_SHORT).show()
+                else
+                    Toast.makeText(itemView.context, "Removed from bookmarks!", Toast.LENGTH_SHORT).show()
 
             }
             rvShare.setOnClickListener {
@@ -127,8 +135,9 @@ class NewsAdapter (private var newsDataList: List<NewsData>,
 
 
         }
-
+    //TODO: #BUG when I scroll the bookmark would disappear
         fun updateBookmarkIcon(isBookmarked: Boolean) {
+            Log.d("NewsAdapter", "Update bookmarked has been called: $isBookmarked")
             if (isBookmarked) {
                 rvBookmark.setImageResource(R.drawable.bookmark_filled)
             } else {
