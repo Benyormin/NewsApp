@@ -153,6 +153,10 @@ class NewsListFragment : Fragment() {
                 }
                 // Navigate to ArticleFragment using Safe Args
 
+            },
+            onLikeClick = {
+                article ->
+                viewModel.toggleLikes(article)
             }
             )
 

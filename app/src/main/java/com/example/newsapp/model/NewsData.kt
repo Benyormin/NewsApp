@@ -16,15 +16,15 @@ import java.util.TimeZone
 @Entity(
     tableName = "articles"
 )
-class NewsData (
-    @PrimaryKey(autoGenerate = true) var uid: Int? = null,
+data class NewsData (
+    var uid: Int? = null,
     @ColumnInfo(name = "title") @SerializedName("title") val title: String,
     @ColumnInfo(name = "imageUrl") @SerializedName("urlToImage") val imageUrl: String?,
     @ColumnInfo(name = "description") @SerializedName("description") val description: String?,
     @ColumnInfo(name = "Date") @SerializedName("publishedAt") val publishedAt: String?,
-    @ColumnInfo(name = "articleUrl") @SerializedName("url") val articleUrl: String,
-    @ColumnInfo(name = "source") @SerializedName("source") val source: Source,
-    var isBookmarked: Boolean = false,
+    @PrimaryKey @ColumnInfo(name = "articleUrl") @SerializedName("url") val articleUrl: String,
+    @SerializedName("source") @Embedded val source: Source,
+    @ColumnInfo(name = "isBookmarked")var isBookmarked: Boolean = false,
     @ColumnInfo(name = "isLike") var isLike: Boolean = false
 )
 

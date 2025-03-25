@@ -24,6 +24,12 @@ class NewsRepository(
 
 
     val bookmarkedArticles: LiveData<List<NewsData>> = dao.getBookmarkedArticles()
+
+    suspend fun getLikeStates(): Map<String, Boolean> {
+
+        return dao.getLikedStates().associate { it.url to it.isLiked }
+    }
+
     suspend fun upsert(article: NewsData) = dao.upsert(article)
 
     suspend fun updateBookmark(article: NewsData) {
@@ -32,6 +38,10 @@ class NewsRepository(
         Log.d("Bookmark", "News Repo: article.isbookmarked = ${article.isBookmarked}")
         //dao.updateArticle(article)
         dao.upsert(article)
+    }
+    suspend fun updateLikes(article: NewsData){
+        dao.upsert(article)
+        Log.d("NewsRepository", "Like has been added with the id of:\n ${article.title} \n id: ${article.uid} \n")
     }
 
     suspend fun deleteArticle(article: NewsData) = dao.deleteArticle(article)
