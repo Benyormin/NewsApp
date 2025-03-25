@@ -1,5 +1,5 @@
 package com.example.newsapp.utils
-// Converters.kt
+
 import androidx.room.TypeConverter
 import com.example.newsapp.model.Source
 import com.google.gson.Gson
