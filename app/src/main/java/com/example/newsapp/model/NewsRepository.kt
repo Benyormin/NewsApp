@@ -2,17 +2,15 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
 
 import com.example.newsapp.api.EspnApiService
 import com.example.newsapp.api.GuardianApiService
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.db.ArticlesDAO
+import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
-import kotlinx.coroutines.async
-import kotlin.text.Typography.section
 
 class NewsRepository(
     private val newsApiService: NewsApiService,
@@ -23,14 +21,22 @@ class NewsRepository(
     ) {
 
 
+
     val bookmarkedArticles: LiveData<List<NewsData>> = dao.getBookmarkedArticles()
+    val rssUrls: LiveData<List<RssUrl>> = dao.getAllRssUrlStrings()
 
     suspend fun getLikeStates(): Map<String, Boolean> {
 
         return dao.getLikedStates().associate { it.url to it.isLiked }
     }
 
-    suspend fun upsert(article: NewsData) = dao.upsert(article)
+    suspend fun addRssUrls(name:String, url:String){
+        dao.insertRss(RssUrl(name= name, url = url))
+    }
+    suspend fun deleteRssUrl(rssUrl: RssUrl){
+        dao.deleteRss(rssUrl)
+    }
+
 
     suspend fun updateBookmark(article: NewsData) {
         Log.d("Bookmark", "News Repo: updateBookmark has been called")

@@ -42,7 +42,6 @@ class BookmarksFragment : Fragment() {
         viewModel.bookMarkedArticles.observe(viewLifecycleOwner){
             bookMarked->
             newsAdapter.updateData((bookMarked))
-
         }
 
     }

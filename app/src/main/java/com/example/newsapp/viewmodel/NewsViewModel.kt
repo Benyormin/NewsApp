@@ -5,14 +5,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.example.newsapp.db.RssUrl
 
-import com.example.newsapp.db.ArticleDatabase
-import com.example.newsapp.db.ArticlesDAO
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.utils.Constants
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -26,8 +23,8 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     private val _guardianNewsData = MutableLiveData<List<NewsData>>()
     val guardianNewsData: LiveData<List<NewsData>> get() = _guardianNewsData
 
-    private val _rssItems = MutableLiveData<List<NewsData>>()
-    val rssItems: LiveData<List<NewsData>> get() = _rssItems
+    private val _rssItems = MutableLiveData<List<RssUrl>>()
+    //val rssItems: LiveData<List<RssUrl>> get() = _rssItems
 
     private val _footballData = MutableLiveData<List<NewsData>>()
     val footballData: LiveData<List<NewsData>> get() = _footballData
@@ -37,10 +34,21 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
     val bookMarkedArticles: LiveData<List<NewsData>> = repository.bookmarkedArticles
 
+    val rssItems: LiveData<List<RssUrl>> = repository.rssUrls
 
 
 
-
+    fun addRssUrls(name: String, url: String){
+        viewModelScope.launch {
+            repository.addRssUrls(name, url)
+            Log.d("ViewModel", "Rss has been added")
+        }
+    }
+    fun deleteRssUrl(rssUrl: RssUrl){
+        viewModelScope.launch {
+            repository.deleteRssUrl(rssUrl)
+        }
+    }
     fun toggleBookmark(article: NewsData) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("Bookmark", "Toggle bookmark has been called")

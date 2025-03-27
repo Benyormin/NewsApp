@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +33,7 @@ class SearchFragment : Fragment() {
     private lateinit var searchView: SearchView
     private lateinit var searchRv: RecyclerView
     private lateinit var adapter: NewsAdapter
+    private lateinit var tvSearch: TextView
 
     private lateinit var  repository : NewsRepository
     private lateinit var viewModel: NewsViewModel
@@ -59,6 +62,8 @@ class SearchFragment : Fragment() {
         // Setup views
         searchView = view.findViewById(R.id.searchView)
         searchRv = view.findViewById(R.id.searchRv)
+        tvSearch = view.findViewById(R.id.tvSearch)
+
         adapter = NewsAdapter(emptyList(),
             onItemClick =  { newsItem ->
             openArticle(newsItem)
@@ -93,6 +98,7 @@ class SearchFragment : Fragment() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // Trigger network call when user presses "Enter"
+                tvSearch.isInvisible = true
                 query?.let { performSearch(it) }
                 return true
             }

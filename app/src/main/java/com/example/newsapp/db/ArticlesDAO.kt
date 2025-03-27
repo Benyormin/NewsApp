@@ -23,6 +23,8 @@ interface ArticlesDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(article: NewsData): Long
 
+
+
     @Query ("SELECT * FROM articles")
     fun getAllArticles(): LiveData<List<NewsData>>
 
@@ -37,5 +39,15 @@ interface ArticlesDAO {
 
     @Query("SELECT articleUrl, isLike FROM articles WHERE isLike = 1")
     suspend fun getLikedStates(): List<LikeState>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRss(rssUrl: RssUrl): Long
+
+
+    @Query("SELECT * FROM rss_urls")
+    fun getAllRssUrlStrings(): LiveData<List<RssUrl>>
+    @Delete
+    suspend fun deleteRss(rssUrl: RssUrl)
+
 
 }

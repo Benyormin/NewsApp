@@ -11,4 +11,5 @@
     <color name="purple">#674BB6</color>
     <color name="lavender">#8692f7</color>
     <color name="gray">#808080</color>
+    <color name="error">#A4172F</color>
 </resources>

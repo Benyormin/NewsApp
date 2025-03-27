@@ -7,11 +7,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.newsapp.NewsViewModelFactory
+import com.example.newsapp.R
 import com.example.newsapp.RetrofitClient
 import com.example.newsapp.TabItem
 import com.example.newsapp.databinding.FragmentHomeBinding
@@ -38,6 +42,7 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var dataList: ArrayList<NewsArticle>
     private lateinit var viewModel: NewsViewModel
+    private lateinit var btnCustomizeTabs: ImageButton
 
 
 
@@ -64,6 +69,7 @@ class HomeFragment : Fragment() {
     // interact with our views
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        btnCustomizeTabs = view.findViewById(R.id.btnMoreOptions)
         val database = ArticleDatabase.invoke(requireContext())
         val dao = database.getArticleDao()
         val repository = NewsRepository(RetrofitClient.newsApiService,
@@ -79,33 +85,14 @@ class HomeFragment : Fragment() {
             "Tech", "Health", "Crypto", "science", "games", "business", "books", "education",
             "environment", "food")
 
-        //TODO: change the logic for separating each view
+
         setupViewPager(userPreferences)
+        btnCustomizeTabs.setOnClickListener {
 
+            val action = HomeFragmentDirections.actionHomeFragmentToTabsManagementFragment()
+            findNavController().navigate(action)
 
-        //viewModel.fetchNewsForCategories(userPreferences)
-
-        /* viewModel.newsData.observe(viewLifecycleOwner){
-            newsMap ->
-            if(newsMap.isNotEmpty()){
-                setupViewPager(newsMap)
-            }
-
-        } */
-        //dataList = createData()
-        //how to find another layout view in a fragment?->
-        //val recyclerViewLayout = LayoutInflater.from(requireContext()).inflate(R.layout.fragment_news_list, null)
-
-        //recyclerView = recyclerViewLayout.findViewById(R.id.rvNews)
-        //recyclerView.adapter = NewsAdapter(dataList)
-        //recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        /* val tabs = userPreferences.map {
-            pref ->
-            TabItem(
-                title = pref,
-                fragment = createFragmentForTab(pref)
-            )
-        }*/
+        }
 
 
     }
@@ -135,6 +122,7 @@ class HomeFragment : Fragment() {
             tab.text = tabs[position].title
 
         }.attach()
+
     }
 
 

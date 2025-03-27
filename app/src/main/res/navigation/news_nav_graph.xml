@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_homeFragment_to_articleFragment"
             app:destination="@id/articleFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_tabsManagementFragment"
+            app:destination="@id/tabsManagementFragment" />
     </fragment>
 
 
@@ -76,4 +79,9 @@
             android:id="@+id/action_settingFragment_to_articleFragment"
             app:destination="@id/articleFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/tabsManagementFragment"
+        android:name="com.example.newsapp.TabsManagementFragment"
+        android:label="fragment_tabs_management"
+        tools:layout="@layout/fragment_tabs_management" />
 </navigation>
