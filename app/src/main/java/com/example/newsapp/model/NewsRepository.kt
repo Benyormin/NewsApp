@@ -2,15 +2,20 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 import com.example.newsapp.api.EspnApiService
 import com.example.newsapp.api.GuardianApiService
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.db.ArticlesDAO
+import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NewsRepository(
     private val newsApiService: NewsApiService,
@@ -24,7 +29,14 @@ class NewsRepository(
 
     val bookmarkedArticles: LiveData<List<NewsData>> = dao.getBookmarkedArticles()
     val rssUrls: LiveData<List<RssUrl>> = dao.getAllRssUrlStrings()
+    val userCategories: LiveData<Preferences> = dao.getAllCategories()
 
+
+    suspend fun updateCategories(categories: Preferences){
+        dao.updateCategories(categories)
+        Log.d("NewsRepository", "updated categories")
+
+    }
     suspend fun getLikeStates(): Map<String, Boolean> {
 
         return dao.getLikedStates().associate { it.url to it.isLiked }
@@ -158,6 +170,21 @@ class NewsRepository(
 
     }
 
+/*
+    suspend fun getRssNews(url: String, source: String): LiveData<List<NewsData>> {
+        val liveData = MutableLiveData<List<NewsData>>()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val data = RssRepository(url, source).fetchRssNews()
+                liveData.postValue(data)
+            } catch (e: Exception) {
+             liveData.postValue(emptyList())
+             Log.d("NewsRepository", "Error fetching RSS news: ${e.message}")
+            }
+        }
+        return liveData
+    }
+*/
     suspend fun getEspnNews(): List<NewsData> {
             return try {
                 //TODO: change the hardcoded text to changable like esp.1 eng.1 ,...

@@ -49,5 +49,13 @@ interface ArticlesDAO {
     @Delete
     suspend fun deleteRss(rssUrl: RssUrl)
 
+    @Query("SELECT * FROM user_preferences WHERE id = 0")
+    fun getAllCategories(): LiveData<Preferences>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateCategories(prefs: Preferences): Long
+
+    // Add this for raw data inspection
+    @Query("SELECT categories FROM user_preferences WHERE id = 0")
+    suspend fun getRawCategories(): String?
 }

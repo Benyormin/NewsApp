@@ -8,6 +8,7 @@ plugins {
     id("kotlin-kapt")
     kotlin("plugin.serialization") version "2.0.21"
 
+
 }
 
 android {
@@ -110,6 +111,8 @@ dependencies {
     //for getting time
 
     implementation ("commons-net:commons-net:3.8.0")
-    //navigation component
+
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
 }

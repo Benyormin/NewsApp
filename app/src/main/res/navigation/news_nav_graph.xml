@@ -20,6 +20,10 @@
         <action
             android:id="@+id/action_homeFragment_to_tabsManagementFragment"
             app:destination="@id/tabsManagementFragment" />
+
+        <argument
+            android:name="userPreferences"
+            app:argType="string[]"/>
     </fragment>
 
 
@@ -83,5 +87,9 @@
         android:id="@+id/tabsManagementFragment"
         android:name="com.example.newsapp.TabsManagementFragment"
         android:label="fragment_tabs_management"
-        tools:layout="@layout/fragment_tabs_management" />
+        tools:layout="@layout/fragment_tabs_management" >
+        <action
+            android:id="@+id/action_tabsManagementFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

@@ -15,13 +15,16 @@ import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.databinding.FragmentNewsListBinding
+import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsData
+import com.google.android.material.snackbar.Snackbar
 
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -38,18 +41,33 @@ class NewsListFragment : Fragment() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var viewModel: NewsViewModel
     private lateinit var category: String
+    private var rssUrl: String = ""
 
     // Key for passing category as an argument
     companion object {
         private const val ARG_CATEGORY = "category"
+        private const val ARG_IS_RSS = "is_rss"
+        private const val ARG_RSS_URL = "rss_url"
 
         fun newInstance(category: String): NewsListFragment {
             val fragment = NewsListFragment()
             val args = Bundle()
             args.putString(ARG_CATEGORY, category)
+            args.putBoolean(ARG_IS_RSS, false)
             fragment.arguments = args
             return fragment
         }
+
+        fun newRssInstance(name: String, url: String): NewsListFragment {
+            return NewsListFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_CATEGORY, name)
+                    putBoolean(ARG_IS_RSS, true)
+                    putString(ARG_RSS_URL, url)
+                }
+            }
+        }
+
     }
 
     override fun onCreateView(
@@ -70,10 +88,17 @@ class NewsListFragment : Fragment() {
 
         // Get the category from arguments
         val category = arguments?.getString(ARG_CATEGORY) ?: "Unknown"
-        loadNews(category)
+        val isRss = arguments?.getBoolean(ARG_IS_RSS) ?: false
+
+        if(isRss){
+            rssUrl = arguments?.getString(ARG_RSS_URL) ?: ""
+            Toast.makeText(requireContext(), "this is the Url: $rssUrl", Toast.LENGTH_SHORT).show()
+
+        }
+        loadNews(category, rssUrl)
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
-            loadNews(category)
+            loadNews(category, rssUrl)
         }
 
 
@@ -83,53 +108,78 @@ class NewsListFragment : Fragment() {
     }
 
     private fun observeData(category: String) {
-        if( category == "Football"){
 
-            viewModel.footballData.observe(viewLifecycleOwner){
-                it ->
-                if(!it.isNullOrEmpty()){
-                    updateRecyclerView(it)
-                }else{
-                    Toast.makeText(requireContext(), "Empty football news!", Toast.LENGTH_SHORT).show()
-                }
-            }
-            /*viewModel.rssItems.observe(viewLifecycleOwner){
-                it->
-                if(!it.isNullOrEmpty()){
-                    updateRecyclerView(it)
-                }
-            }
-            /*
-            viewModel.guardianNewsData.observe(viewLifecycleOwner){
+        viewModel.rssItems.observe(viewLifecycleOwner) { rssList ->
 
-                it ->
-                if (it.isNullOrEmpty()){
-                    Toast.makeText(requireContext(), "Empty guardian news!", Toast.LENGTH_SHORT).show()
-                }
-                updateRecyclerView(it)
+            Log.d("NewsListFragment", "observe data, rssItems $rssList")
+
+            Log.d("Comparison", "Checking category: '$category'")
+            rssList.forEach {
+                Log.d(
+                    "Comparison",
+                    "RssUrl name: '${it.name}' vs category: '${category}' → ${it.name == category}"
+                )
             }
 
-             */
-        */
+
+            if(category == "Football"){
+
+                viewModel.footballData.observe(viewLifecycleOwner){
+                        it ->
+                    if(!it.isNullOrEmpty()){
+                        updateRecyclerView(it)
+                    }else{
+                        Toast.makeText(requireContext(), "Empty football news!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+            else if (rssList.any{ it.name == category}){
+                Log.d("NewsListFragment", "rssNewsData.observe has been called")
+                Log.d("NewsListFragment", "rssNewsData.observe${rssList}")
+                Log.d("NewsListFragment","Observing RssNews for ${category}")
+                viewModel.CategoryInitialized(category)
+                viewModel.rssNewsData[category]?.observe(viewLifecycleOwner){
+                        it ->
+                    if(it != null)
+                        updateRecyclerView(it)
+                }
+                // 3. Trigger fetch (now safe)
+                viewModel.fetchRssNews(category, rssUrl)
+            }
+            else{
+                viewModel.newsData.observe(viewLifecycleOwner){
+                        it ->
+                    val articles = it[category]?: emptyList()
+                    updateRecyclerView(articles)
+                }
+            }
         }
-        else{
-            viewModel.newsData.observe(viewLifecycleOwner){
-                it ->
-                val articles = it[category]?: emptyList()
-                updateRecyclerView(articles)
-            }
-        }
+
+
 
     }
 
-    private fun loadNews(category: String) {
-        if(category == "Football"){
-            viewModel.getFootballNews()
-            //viewModel.fetchGuardianNews("football")
-            //viewModel.fetchBbcSportNews()
-        }else{
-            viewModel.fetchNewsForCategory(category)
+    private fun loadNews(category: String, rssUrl: String) {
+
+        viewModel.rssItems.observe(viewLifecycleOwner){
+            rssList ->
+
+            if(category == "Football"){
+                viewModel.getFootballNews()
+            }
+            else if(rssList.any{it.name == category}){
+                viewModel.fetchRssNews(category, rssUrl)
+                Log.d("NewsListFragment", "fetchRssNews has been called")
+                Log.d("NewsListFragment", "rssNewsData: ${viewModel.rssNewsData[category]?.value}")
+            }
+            else
+                viewModel.fetchNewsForCategory(category)
+
         }
+
+
+
 
         swipeRefreshLayout.isRefreshing = false
 
@@ -175,7 +225,7 @@ class NewsListFragment : Fragment() {
     private val networkChangeReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context, intent: Intent) {
             if (::category.isInitialized && isNetworkAvailable()) {
-                loadNews(category)
+                loadNews(category,rssUrl)
             }
         }
     }

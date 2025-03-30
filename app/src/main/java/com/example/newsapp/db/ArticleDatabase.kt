@@ -12,7 +12,7 @@ import com.example.newsapp.utils.Converters
 
 
 @Database(
-    entities = [NewsData::class, RssUrl::class],
+    entities = [NewsData::class, RssUrl::class, Preferences::class],
     version = 1
 )
 

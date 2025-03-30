@@ -2,14 +2,14 @@
 <resources>
     <!-- Custom button style -->
     <style name="CustomButtonStyle" parent="Widget.MaterialComponents.Button">
-        <item name="backgroundTint">@color/Secondary</item> <!-- Background color -->
+        <item name="backgroundTint">@color/Secondary</item>
         <item name="android:textColor">@color/black</item> <!-- Text color -->
         <item name="android:textStyle">bold</item>
         <item name="cornerRadius">8dp</item> <!-- Rounded corners -->
     </style>
 
     <style name="CustomButtonUnselected" parent="Widget.MaterialComponents.Button">
-        <item name="backgroundTint">@color/white</item> <!-- Background color -->
+        <!-- <item name="backgroundTint">@color/white</item>-->
         <item name="android:textColor">@color/black</item> <!-- Text color -->
         <item name="android:textStyle">bold</item>
         <item name="cornerRadius">8dp</item> <!-- Rounded corners -->

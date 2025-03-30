@@ -3,16 +3,21 @@ package com.example.newsapp.viewmodel
 import NewsRepository
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsapp.db.Preferences
+
 import com.example.newsapp.db.RssUrl
+import com.example.newsapp.model.NewsArticle
 
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.Collections.addAll
 
 class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
@@ -20,11 +25,12 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     private val _newsData = MutableLiveData<Map<String, List<NewsData>>>()
     val newsData: LiveData<Map<String, List<NewsData>>> get() = _newsData
 
+    private val _rssNewsData = mutableMapOf<String, MutableLiveData<List<NewsData>>>()
+    val rssNewsData: Map<String, LiveData<List<NewsData>>> get() = _rssNewsData
+
     private val _guardianNewsData = MutableLiveData<List<NewsData>>()
     val guardianNewsData: LiveData<List<NewsData>> get() = _guardianNewsData
 
-    private val _rssItems = MutableLiveData<List<RssUrl>>()
-    //val rssItems: LiveData<List<RssUrl>> get() = _rssItems
 
     private val _footballData = MutableLiveData<List<NewsData>>()
     val footballData: LiveData<List<NewsData>> get() = _footballData
@@ -35,8 +41,41 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     val bookMarkedArticles: LiveData<List<NewsData>> = repository.bookmarkedArticles
 
     val rssItems: LiveData<List<RssUrl>> = repository.rssUrls
+    val userCategories: LiveData<Preferences> = repository.userCategories
+
+   /* val combinedData = MediatorLiveData<Pair<List<String>, List<RssUrl>>>().apply{
+        var lastCategories: List<String> = emptyList()
+        var lastRssItems: List<RssUrl> = emptyList()
+
+        fun update() {
+            value = Pair(lastCategories, lastRssItems)
+        }
+
+        addSource(userCategories) { categories ->
+            lastCategories = categories?.categories ?: emptyList()
+            update()
+        }
+
+        addSource(rssItems) { rssItems ->
+            lastRssItems = rssItems
+            update()
+        }
+
+    }*/
 
 
+    fun updateUserPreferences(userPreferences: Preferences){
+        viewModelScope.launch {
+            repository.updateCategories(userPreferences)
+            Log.d("viewModel", "update preferences has been called ${userPreferences.categories}")
+        }
+    }
+    // Initialize LiveData before fetching
+    fun CategoryInitialized(category: String) {
+        if (!_rssNewsData.containsKey(category)) {
+            _rssNewsData[category] = MutableLiveData(emptyList())
+        }
+    }
 
     fun addRssUrls(name: String, url: String){
         viewModelScope.launch {
@@ -67,7 +106,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
      *
      * fetch news from NewsAPI service
      */
-    fun fetchNewsForCategories(categories: List<String>) {
+    fun fetchNewsForCategories(categories: List<String>){
         viewModelScope.launch {
             val result = repository.getNewsForCategories(categories)
             _newsData.value = result
@@ -113,13 +152,22 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
         }
     }
 
-    /*fun fetchBbcSportNews(){
-        Log.d("NewsViewModel","Fetch BBC Sport News has been called!")
+    fun fetchRssNews(category: String, url: String) {
         viewModelScope.launch {
-            _rssItems.value = repository.getRssNews()
-        }
+            // Get raw list from repository
+            CategoryInitialized(category)
+            val newsList = repository.getRssNews(url, category)
+            Log.d("NewsViewModel", "fetchNews: ${newsList}")
 
-    }*/
+         /*   // Create/update LiveData entry
+            _rssNewsData.getOrPut(category) {
+                MutableLiveData()
+            }.value = newsList*/
+
+
+            _rssNewsData[category]?.postValue(newsList)
+        }
+    }
 
     fun getFootballNews() {
         // TODO: I can receive a list<map<url, source>> then loop through it
@@ -142,6 +190,8 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
             // Wait for all network calls to complete and get their results
             val guardian = guardianDeferred.await()
+            val espn2 = espn2Deferred.await()
+
             val cbs = cbsDeferred.await()
             val espn = espnDeferred.await()
             val goal = goalDeferred.await()
@@ -151,7 +201,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             val ninety = ninetyDeferred.await()
             val mirror = mirrorDeferred.await()
             val dailyMail = dailyMailDeferred.await()
-            val espn2 = espn2Deferred.await()
+
 
 
 

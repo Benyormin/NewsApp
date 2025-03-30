@@ -4,6 +4,7 @@ import NewsRepository
 import com.example.newsapp.viewmodel.NewsViewModel
 import ViewPagerAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.example.newsapp.RetrofitClient
 import com.example.newsapp.TabItem
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.db.ArticleDatabase
+import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsArticle
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -43,16 +45,15 @@ class HomeFragment : Fragment() {
     private lateinit var dataList: ArrayList<NewsArticle>
     private lateinit var viewModel: NewsViewModel
     private lateinit var btnCustomizeTabs: ImageButton
+    private val rssUrls = mutableListOf<RssUrl>()
+    private var tabs = mutableListOf<String>()
+    private var userPreferences: MutableList<String> = mutableListOf("For you")
 
-
-
-
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val preferences = arguments?.getStringArray("userPreferences")?.toList()?: emptyList()
+        Log.d("HomeFragment", "argument data  received ${preferences}")
     }
 
     override fun onCreateView(
@@ -81,22 +82,91 @@ class HomeFragment : Fragment() {
             NewsViewModel::class.java)
 
         // Example user preferences (replace with your actual data source)
-        val userPreferences = listOf("For u", "Sports", "Football", "Politics",
+        /*val userPreferences = listOf("For u", "Sports", "Football", "Politics",
             "Tech", "Health", "Crypto", "science", "games", "business", "books", "education",
             "environment", "food")
+*/
+        var categoryIsReady = false
+        var rssIsReady = false
+        fun checkAndUpdate() {
+            if (categoryIsReady && rssIsReady) {
+                tabs = addRssUrlsToTabs(userPreferences, rssUrls)
+                setupViewPager(tabs)
+            }
+        }
+
+        viewModel.userCategories.observe(viewLifecycleOwner){
+            pref->
+            if(pref != null && pref.categories.isNotEmpty()){
+                userPreferences = mutableListOf()
+                userPreferences.add("For you")
+                userPreferences.addAll(pref.categories)
+                Log.d("HomeFragment", "userPref= ${userPreferences}")
+            }
+            else{
+             userPreferences.add("For you")
+             Log.d("HomeFragment", "This is the default value")
+            }
+            categoryIsReady = true
+            checkAndUpdate()
+        }
+        viewModel.rssItems.observe(viewLifecycleOwner){
+            it ->
+            rssUrls.clear()
+            rssUrls.addAll(it)
+            //tabs = addRssUrlsToTabs(userPreferences, rssUrls)
+            Log.d("HomeFragment", "${rssUrls}")
+            //setupViewPager(tabs)
+            rssIsReady = true
+            checkAndUpdate()
+        }
 
 
-        setupViewPager(userPreferences)
+/*
+        viewModel.combinedData.observe(viewLifecycleOwner){
+            (categories, rssUrls)->
+            Log.d("DATA_FLOW", "Raw categories from DB: $categories")
+            Log.d("DATA_FLOW", "Raw RSS URLs from DB: $rssUrls")
+            userPreferences.clear()
+            this.rssUrls.clear()
+
+            userPreferences.add("For you")
+            if (categories.isNotEmpty()){
+                Log.d("HomeFragment", "categories is not empty $categories")
+
+                userPreferences.addAll(categories)
+            }
+            this.rssUrls.addAll(rssUrls)
+
+            tabs = addRssUrlsToTabs(userPreferences, this.rssUrls)
+            // Debug logs
+            Log.d("DATA_FLOW", "Final userPrefs: $userPreferences")
+            Log.d("DATA_FLOW", "Final RSS URLs: $rssUrls")
+            Log.d("HomeFragment", "Tabs: ${tabs}")
+
+            // Update ViewPager
+            setupViewPager(tabs)
+
+
+        }
+*/
         btnCustomizeTabs.setOnClickListener {
 
             val action = HomeFragmentDirections.actionHomeFragmentToTabsManagementFragment()
             findNavController().navigate(action)
-
         }
 
 
     }
 
+    private fun addRssUrlsToTabs(userPreferences: List<String>,
+                                 rssUrls: MutableList<RssUrl>): MutableList<String> {
+        val allTabs = mutableListOf<String>().apply {
+            addAll(userPreferences)
+            addAll(rssUrls.map { it.name })
+        }
+        return allTabs
+    }
 
 
     // memory leak and stuff
@@ -108,9 +178,15 @@ class HomeFragment : Fragment() {
     private fun setupViewPager(categories: List<String>){
         val tabs = categories.map {
             category ->
+            val rssUrl = rssUrls.find { it.name == category }
             TabItem(
                 title = category,
-                fragment = createFragmentForTab(category)
+                fragment = if (rssUrl != null) {
+                    Log.d("HomeFragment", "creating fragment rssUrl: $rssUrl")
+                    NewsListFragment.newRssInstance(category, rssUrl.url)
+                }else{
+                    NewsListFragment.newInstance(category)
+                }
             )
         }
 
