@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Primary"
+    tools:context=".TabsManagementFragment">
+
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/Primary"
+        android:clickable="true"
+        android:contentDescription="back button"
+        android:focusable="true"
+
+        android:scaleType="fitCenter"
+        android:src="@drawable/arrow_back_secondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Categories"
+        android:textColor="@color/Secondary"
+        android:textSize="27sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toEndOf="@+id/btnBack"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="@string/tabManagement"
+        android:textColor="@color/Secondary"
+        app:layout_constraintBottom_toTopOf="@+id/btnSports"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnBack" />
+
+    <Button
+        android:id="@+id/btnforU"
+        style="@style/CustomButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="For you"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFootball"
+        style="@style/CustomButtonUnselected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:text="Football"
+        android:textAllCaps="false"
+        android:backgroundTint="@drawable/button_state_selector"
+        app:layout_constraintStart_toEndOf="@+id/btnforU"
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSports"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:text="Sports"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btnFootball"
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBooks"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:text="Books"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btnSports"
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTech"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="Technology"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnforU" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPolitics"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:text="Politics"
+        android:textAllCaps="false"
+
+        app:layout_constraintStart_toEndOf="@+id/btnEnvironment"
+        app:layout_constraintTop_toBottomOf="@+id/btnBooks" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSience"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Science"
+        android:layout_marginStart="15dp"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTech" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBusiness"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Business"
+        android:textAllCaps="false"
+        android:layout_marginLeft="6dp"
+        app:layout_constraintStart_toEndOf="@+id/btnSience"
+        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnHealth"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Health"
+        android:layout_marginLeft="6dp"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btnEducation"
+        app:layout_constraintTop_toBottomOf="@+id/btnGames" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEducation"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Education"
+        android:textAllCaps="false"
+        android:layout_marginLeft="6dp"
+        app:layout_constraintStart_toEndOf="@+id/btnCrypto"
+        app:layout_constraintTop_toBottomOf="@+id/btnBusiness" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCrypto"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crypto"
+        android:layout_marginStart="15dp"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSience" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFood"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Food"
+        android:layout_marginLeft="6dp"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btnGames"
+        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGames"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Games"
+        android:layout_marginLeft="6dp"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btnBusiness"
+        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEnvironment"
+        style="@style/CustomButtonUnselected"
+        android:backgroundTint="@drawable/button_state_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Environment"
+        android:textAllCaps="false"
+        android:layout_marginLeft="6dp"
+        app:layout_constraintStart_toEndOf="@+id/btnTech"
+        app:layout_constraintTop_toBottomOf="@+id/btnFootball" />
+
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:text="My Rss Feeds"
+        android:textColor="@color/Secondary"
+        android:textSize="27sp"
+        android:textStyle="bold"
+        android:layout_marginStart="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCrypto" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="You can add or remove custom rss URLs"
+        android:textColor="@color/Secondary"
+        android:layout_marginStart="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <!-- Add Input Field and Button -->
+    <LinearLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/etRssName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:hint="Enter Name"
+            android:minHeight="48dp"
+            android:paddingRight="3dp"
+            android:textColor="@color/Secondary"
+            android:textColorHint="@color/Secondary" />
+
+        <EditText
+            android:id="@+id/etRssUrl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter RSS URL"
+            android:inputType="textUri"
+            android:minHeight="48dp"
+            android:textAllCaps="false"
+            android:textColor="@color/Secondary"
+            android:textColorHint="@color/Secondary" />
+
+        <Button
+            android:id="@+id/btnAdd"
+            style="@style/CustomButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- RecyclerView for the list -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRssList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnSave"
+        app:layout_constraintEnd_toStartOf="@+id/guideline7"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/inputLayout" />
+
+    <Button
+        android:id="@+id/btnSave"
+        style="@style/CustomButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="5dp"
+        android:text="Apply Changes"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.03892944" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="101dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.96107054" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

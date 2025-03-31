@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <!-- RSS URL Text -->
+    <TextView
+        android:id="@+id/tvrssName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textColor="@color/Secondary"
+        android:textSize="16sp"
+        android:layout_marginRight="4dp"/>
+    <TextView
+        android:id="@+id/tvRssUrl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="RSS URL"
+        android:textAllCaps="false"
+        android:textColor="@color/Secondary"
+        android:textSize="16sp"
+        android:inputType="textUri"/>
+
+    <!-- Edit Button -->
+    <ImageButton
+        android:id="@+id/btnEditRss"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="4dp"
+        android:background="@drawable/edit_24dp_secondary"
+        android:text="Edit" />
+
+    <!-- Delete Button -->
+    <ImageButton
+        android:id="@+id/btnDeleteRss"
+        android:background="@drawable/delete_24dp_secondary"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:text="Delete"
+        android:layout_marginStart="4dp"/>
+</LinearLayout>
