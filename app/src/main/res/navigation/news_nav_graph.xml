@@ -85,11 +85,33 @@
     </fragment>
     <fragment
         android:id="@+id/tabsManagementFragment"
-        android:name="com.example.newsapp.TabsManagementFragment"
+        android:name="com.example.newsapp.view.TabsManagementFragment"
         android:label="fragment_tabs_management"
         tools:layout="@layout/fragment_tabs_management" >
         <action
             android:id="@+id/action_tabsManagementFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.newsapp.view.RegisterFragment"
+        android:label="RegisterFragment" >
+        <action
+            android:id="@+id/action_registerFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_registerFragment_to_tabsManagementFragment"
+            app:destination="@id/tabsManagementFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.example.newsapp.view.SignInFragment"
+        android:label="SignInFragment" >
+        <action
+            android:id="@+id/action_signInFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_tabsManagementFragment"
+            app:destination="@id/tabsManagementFragment" />
     </fragment>
 </navigation>

@@ -1,8 +1,7 @@
-package com.example.newsapp
+package com.example.newsapp.view
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,17 +10,18 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.newsapp.R
 import com.example.newsapp.adapters.CustomRSSListAdapter
 import com.example.newsapp.databinding.FragmentTabsManagementBinding
 import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.viewmodel.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
-
 
 class TabsManagementFragment : Fragment() {
 
@@ -141,7 +141,7 @@ class TabsManagementFragment : Fragment() {
                     userPreference.add(btn.text.toString())
                 }
             }
-            viewModel.updateUserPreferences(Preferences(0,userPreference))
+            viewModel.updateUserPreferences(Preferences(0, userPreference))
             val action= TabsManagementFragmentDirections.
             actionTabsManagementFragmentToHomeFragment(userPreference.toTypedArray())
             findNavController().navigate(action)
