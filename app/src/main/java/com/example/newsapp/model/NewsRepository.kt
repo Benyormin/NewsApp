@@ -6,8 +6,11 @@ import androidx.lifecycle.MutableLiveData
 
 import com.example.newsapp.api.EspnApiService
 import com.example.newsapp.api.GuardianApiService
+import com.example.newsapp.api.HuggingFaceService
+import com.example.newsapp.api.MercuryService
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.api.NewsApiService
+import com.example.newsapp.api.SummaryRequest
 import com.example.newsapp.db.ArticlesDAO
 import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
@@ -16,6 +19,8 @@ import com.example.newsapp.model.Source
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class NewsRepository(
     private val newsApiService: NewsApiService,
@@ -98,8 +103,6 @@ class NewsRepository(
 
 
     /**
-     *
-     *
      *
      * Returns a List<newsData> for a given section from guardianService
      * TODO: Change football parameter
@@ -234,6 +237,37 @@ class NewsRepository(
         else return emptyList()
     }
 
+
+
+    suspend fun getSummary(url: String): String? {
+        return try {
+            // Step 1: Get Clean Article Text
+            val mercury = Retrofit.Builder()
+                .baseUrl("https://mercury.postlight.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(MercuryService::class.java)
+
+            val articleResponse = mercury.parseArticle(url)
+            if (!articleResponse.isSuccessful || articleResponse.body()?.error == true) {
+                return null
+            }
+
+            val articleText = articleResponse.body()?.content ?: return null
+
+            // Step 2: Summarize
+            val hf = Retrofit.Builder()
+                .baseUrl("https://api-inference.huggingface.co/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(HuggingFaceService::class.java)
+
+            val summaryResponse = hf.summarize(SummaryRequest(articleText))
+            summaryResponse.body()?.firstOrNull()?.summary
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     //get sport news
 

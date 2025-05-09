@@ -23,24 +23,27 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-      /*  val homeFragment = HomeFragment()
-        val searchFragment = SearchFragment()
-        val bookmarksFragment = BookmarksFragment()
-        val settingFragment = SettingFragment()
+        // Check if it's the first launch
+        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val isFirstTime = sharedPreferences.getBoolean("isFirstTime", true)
 
-        setCurrentFragment(homeFragment)
-        binding.bottomNavigationView.setOnNavigationItemSelectedListener {
-            when(it.itemId){
-                R.id.homeFragment -> setCurrentFragment(homeFragment)
-                R.id.exploreFragment -> setCurrentFragment(searchFragment)
-                R.id.bookmarksFragment -> setCurrentFragment(bookmarksFragment)
-                R.id.profileFragment -> setCurrentFragment(settingFragment)
-            }
-            true
-        }
-*/
+
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.flFragment) as NavHostFragment
         navController = navHostFragment.navController
+
+        // Inflate the navigation graph
+        val navGraph = navController.navInflater.inflate(R.navigation.news_nav_graph)
+
+        // Set start destination based on first launch
+        val startDestination = if (isFirstTime) {
+            sharedPreferences.edit().putBoolean("isFirstTime", false).apply()
+            R.id.registerFragment
+        } else {
+            R.id.homeFragment
+        }
+        navGraph.setStartDestination(startDestination)
+        // Apply the modified graph
+        navController.graph = navGraph
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
@@ -54,9 +57,5 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flFragment, fragment)
-            commit()
-        }
+
 }

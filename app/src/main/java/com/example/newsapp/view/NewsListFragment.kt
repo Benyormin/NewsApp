@@ -192,13 +192,13 @@ class NewsListFragment : Fragment() {
                 Log.d("Bookmark", "onBookmarkClick running...")
                 viewModel.toggleBookmark(article)
             },
-            onItemClick = { url ->
-                if(url == null){
+            onItemClick = { article ->
+                if(article.articleUrl == null){
                     Log.e("NewsListFragment", "URL is null")
                     Toast.makeText(requireContext(), "Url is null", Toast.LENGTH_SHORT).show()
                 }else{
-                    Log.d("NewsListFragment", "Navigating to ArticleFragment with URL: $url")
-                    val action = HomeFragmentDirections.actionHomeFragmentToArticleFragment(url)
+                    Log.d("NewsListFragment", "Navigating to ArticleFragment with URL: ${article.articleUrl}")
+                    val action = HomeFragmentDirections.actionHomeFragmentToArticleFragment(article)
                     findNavController().navigate(action)
                 }
                 // Navigate to ArticleFragment using Safe Args

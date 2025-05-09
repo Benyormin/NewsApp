@@ -34,8 +34,10 @@
         android:label="ArticleFragment"
         tools:layout="@layout/fragment_article" >
         <argument
-            android:name="articleUrl"
-            app:argType="string" /> <!-- URL argument -->
+            android:name="newsData"
+            app:argType="com.example.newsapp.model.NewsData"
+            app:nullable="false"/>
+
     </fragment>
 
     <!-- NewsList Fragment -->

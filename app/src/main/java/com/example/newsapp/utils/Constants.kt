@@ -25,6 +25,8 @@ public class Constants {
         val NEWS_API_BASE_URL: String = "https://newsapi.org/v2/"
         val ESPN_BASE_URL: String = "https://site.api.espn.com/"
 
+        val SUMMARY_BASE_URL: String ="https://59a2-104-28-221-41.ngrok-free.app"
+
 
 
         //https://content.guardianapis.com/search?section=football&type=article&show-fields=trailText,headline,thumbnail,short-url&order-by=newest&orderby=newest&api-key=e781c51d-7f1b-4293-8bf2-d32ef1d1ff28

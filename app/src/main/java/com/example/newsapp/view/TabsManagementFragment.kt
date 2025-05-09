@@ -1,5 +1,6 @@
 package com.example.newsapp.view
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.viewmodel.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 
 class TabsManagementFragment : Fragment() {
 
@@ -62,11 +64,8 @@ class TabsManagementFragment : Fragment() {
         rssFeedAdapter = CustomRSSListAdapter(rssUrls,
             { feed, pos ->
                 //edit
-                Toast.makeText(
-                    requireContext(),
-                    "Edit: ${feed.name}, ${feed.url}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                // Edit button clicked
+                showEditDialog(feed, pos)
             }, { feed, pos ->
                 // Handle delete
                 rssFeedAdapter.removeRssFeed(pos)
@@ -94,8 +93,9 @@ class TabsManagementFragment : Fragment() {
         }
         //set style of selected buttons
         viewModel.userCategories.observe(viewLifecycleOwner){
-            if(!it.categories.isNullOrEmpty()){
-                val prefs = it.categories
+            val categories = it?.categories?: listOf("For you")
+            if(categories.isNotEmpty()){
+                val prefs = categories
                 for (btn in Buttons){
                     if (prefs.contains(btn.text.toString())){
                         btn.isSelected = true
@@ -141,11 +141,21 @@ class TabsManagementFragment : Fragment() {
                     userPreference.add(btn.text.toString())
                 }
             }
-            viewModel.updateUserPreferences(Preferences(0, userPreference))
-            val action= TabsManagementFragmentDirections.
-            actionTabsManagementFragmentToHomeFragment(userPreference.toTypedArray())
-            findNavController().navigate(action)
-            Log.d("TabsManagementFragment", "btn football state: ${binding.btnFootball.isSelected}")
+            if (userPreference.size < 2){
+                Snackbar.make(view, "You must at least pick two categories", Snackbar.LENGTH_SHORT).apply {
+                    setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.error))
+                    setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                }.show()
+            }
+            else{
+                viewModel.updateUserPreferences(Preferences(0, userPreference))
+                val action= TabsManagementFragmentDirections.
+                actionTabsManagementFragmentToHomeFragment(userPreference.toTypedArray())
+                findNavController().navigate(action)
+
+            }
+
+
         }
 
 
@@ -216,6 +226,48 @@ class TabsManagementFragment : Fragment() {
             btnAnimaiton(btn) }
 
     }
+
+    private fun showEditDialog(feed: RssUrl, pos: Int) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_rss, null)
+        val etName = dialogView.findViewById<TextInputEditText>(R.id.etName)
+        val etUrl = dialogView.findViewById<TextInputEditText>(R.id.etUrl)
+
+        etName.setText(feed.name)
+        etUrl.setText(feed.url)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Edit RSS Feed")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val newName = etName.text.toString().trim()
+                val newUrl = etUrl.text.toString().trim()
+
+                if (newName.isNotEmpty() && newUrl.isNotEmpty()) {
+                    val updatedFeed = feed.copy(
+                        name = newName,
+                        url = newUrl
+                    )
+
+                    // Update adapter
+                    rssFeedAdapter.updateRssFeed(pos, updatedFeed)
+
+                    // Update database
+                    //viewModel.updateRssUrl(updatedFeed)
+                    viewModel.deleteRssUrl(feed)
+                    viewModel.addRssUrls(newName, newUrl)
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Changes saved",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+
 
     private fun addAllButtons() {
         Buttons = mutableListOf()

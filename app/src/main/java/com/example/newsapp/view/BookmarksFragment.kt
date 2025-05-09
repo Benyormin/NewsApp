@@ -50,13 +50,13 @@ class BookmarksFragment : Fragment() {
         newsAdapter = NewsAdapter(
             newsDataList = viewModel.bookMarkedArticles.value ?: emptyList(), // Use current data
             onItemClick= {
-                url ->
-                    if(url == null){
+                article ->
+                    if(article.articleUrl == null){
                         Log.e("Bookmarks Fragment", "URL is null")
                         Toast.makeText(requireContext(), "Url is null", Toast.LENGTH_SHORT).show()
                     }else{
-                        Log.d("Bookmarks Fragment", "Navigating to ArticleFragment with URL: $url")
-                        val action = BookmarksFragmentDirections.actionBookmarksFragmentToArticleFragment(url)
+                        Log.d("Bookmarks Fragment", "Navigating to ArticleFragment with URL: ${article.articleUrl}")
+                        val action = BookmarksFragmentDirections.actionBookmarksFragmentToArticleFragment(article)
                         findNavController().navigate(action)
                     }
 

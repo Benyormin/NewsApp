@@ -69,6 +69,13 @@ class CustomRSSListAdapter (
         notifyDataSetChanged()
 
     }
+    //for editing purpose
+    fun updateRssFeed(position: Int, updatedFeed: RssUrl) {
+        if (position in 0 until rssFeed.size) {
+            rssFeed[position] = updatedFeed
+            notifyItemChanged(position)
+        }
+    }
 
 }
 

@@ -7,7 +7,8 @@ plugins {
     id ("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
     kotlin("plugin.serialization") version "2.0.21"
-
+    id ("kotlin-parcelize")
+    id("com.google.gms.google-services")
 
 }
 
@@ -114,5 +115,24 @@ dependencies {
 
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    // HTML Parsing
+    implementation("org.jsoup:jsoup:1.17.2")
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+
+
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-auth-ktx")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+
+
+
+
 
 }

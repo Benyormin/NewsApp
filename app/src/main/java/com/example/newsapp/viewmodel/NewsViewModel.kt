@@ -43,26 +43,6 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     val rssItems: LiveData<List<RssUrl>> = repository.rssUrls
     val userCategories: LiveData<Preferences> = repository.userCategories
 
-   /* val combinedData = MediatorLiveData<Pair<List<String>, List<RssUrl>>>().apply{
-        var lastCategories: List<String> = emptyList()
-        var lastRssItems: List<RssUrl> = emptyList()
-
-        fun update() {
-            value = Pair(lastCategories, lastRssItems)
-        }
-
-        addSource(userCategories) { categories ->
-            lastCategories = categories?.categories ?: emptyList()
-            update()
-        }
-
-        addSource(rssItems) { rssItems ->
-            lastRssItems = rssItems
-            update()
-        }
-
-    }*/
-
 
     fun updateUserPreferences(userPreferences: Preferences){
         viewModelScope.launch {
@@ -100,6 +80,9 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             repository.updateLikes(article)
         }
     }
+
+    //viewModel.updateRssUrl(updatedFeed)
+    //fun updateRssUrl()
     // Fetch news for multiple categories
     /**
      *

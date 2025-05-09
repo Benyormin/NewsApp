@@ -18,7 +18,7 @@ import com.example.newsapp.utils.HelperFuncitons
 import com.example.newsapp.viewmodel.NewsViewModel
 //FUTURE: add viewModel to this constructor and remove two click items
 class NewsAdapter (private var newsDataList: List<NewsData>,
-                   private val onItemClick: (String) -> Unit,
+                   private val onItemClick: (NewsData) -> Unit,
                    private val onBookmarkClick: (NewsData) ->Unit,
                    private val onLikeClick: (NewsData)-> Unit
     )
@@ -132,7 +132,7 @@ class NewsAdapter (private var newsDataList: List<NewsData>,
 
 
             itemView.setOnClickListener {
-                onItemClick(article.articleUrl)
+                onItemClick(article)
             }
 
 

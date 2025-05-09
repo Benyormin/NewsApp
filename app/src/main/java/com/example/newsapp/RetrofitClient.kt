@@ -4,6 +4,8 @@ import com.example.newsapp.api.EspnApiService
 import com.example.newsapp.api.GuardianApiService
 
 import com.example.newsapp.api.NewsApiService
+import com.example.newsapp.api.SummaryApiService
+import com.example.newsapp.api.SummaryRequest
 import com.example.newsapp.utils.Constants
 import com.example.newsapp.view.InsecureTrustManager
 import com.example.newsapp.view.createInsecureSslSocketFactory
@@ -11,6 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 // RetrofitClient.kt
@@ -78,6 +81,9 @@ class RetrofitClient {
                 .addInterceptor(HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
                 })
+                .connectTimeout(30, TimeUnit.SECONDS) // Add timeouts
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .build()
         }
 
@@ -102,6 +108,10 @@ class RetrofitClient {
 
         val espnApiService: EspnApiService by lazy{
             getRetrofit(Constants.ESPN_BASE_URL).create(EspnApiService::class.java)
+        }
+
+        val summaryRetrofit: SummaryApiService by lazy{
+            getRetrofit(Constants.SUMMARY_BASE_URL).create(SummaryApiService::class.java)
         }
     }
 

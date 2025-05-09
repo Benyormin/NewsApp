@@ -35,7 +35,7 @@ class SearchFragment : Fragment() {
     private lateinit var adapter: NewsAdapter
     private lateinit var tvSearch: TextView
 
-    private lateinit var  repository : NewsRepository
+    private lateinit var repository: NewsRepository
     private lateinit var viewModel: NewsViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,15 +65,14 @@ class SearchFragment : Fragment() {
         tvSearch = view.findViewById(R.id.tvSearch)
 
         adapter = NewsAdapter(emptyList(),
-            onItemClick =  { newsItem ->
-            openArticle(newsItem)
-        },
-            onBookmarkClick = {article -> viewModel.toggleBookmark(article)},
-            onLikeClick = {
-                    article ->
+            onItemClick = { newsItem ->
+                openArticle(newsItem)
+            },
+            onBookmarkClick = { article -> viewModel.toggleBookmark(article) },
+            onLikeClick = { article ->
                 viewModel.toggleLikes(article)
             }
-            )
+        )
 
         searchRv.adapter = adapter
         searchRv.layoutManager = LinearLayoutManager(requireContext())
@@ -85,9 +84,8 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeData() {
-        viewModel.searchedData.observe(viewLifecycleOwner){
-            it ->
-            if(!it.isNullOrEmpty()){
+        viewModel.searchedData.observe(viewLifecycleOwner) { it ->
+            if (!it.isNullOrEmpty()) {
                 adapter.updateData(it)
             }
 
@@ -112,12 +110,12 @@ class SearchFragment : Fragment() {
 
     private fun performSearch(query: String) {
         if (query.isEmpty()) {
-            Toast.makeText(requireContext(), "Please enter a search term", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please enter a search term", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
-        // Show loading indicator (you can use a ProgressBar or a custom loading view)
-        showLoadingIndicator(true)
+
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -125,25 +123,32 @@ class SearchFragment : Fragment() {
 
             } catch (e: Exception) {
                 // Handle error
-                Toast.makeText(requireContext(), "Failed to fetch results: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to fetch results: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 Log.e("SearchFragment", "Search error: ${e.message}")
             } finally {
-                // Hide loading indicator
-                showLoadingIndicator(false)
+
             }
         }
     }
 
-    private fun openArticle(url: String) {
+    private fun openArticle(article: NewsData) {
+        if (article.articleUrl == null) {
+            Log.e("SearchFragment", "URL is null")
+            Toast.makeText(requireContext(), "Url is null", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.d(
+                "search fragment",
+                "Navigating to ArticleFragment with URL: ${article.articleUrl}"
+            )
+            val action = SearchFragmentDirections.actionSearchFragmentToArticleFragment(article)
+            findNavController().navigate(action)
 
-        Log.d("search fragment", "Navigating to ArticleFragment with URL: $url")
-        val action = SearchFragmentDirections.actionSearchFragmentToArticleFragment(url)
-        findNavController().navigate(action)
-    }
+        }
 
-    private fun showLoadingIndicator(show: Boolean) {
-        // Implement a loading indicator (e.g., ProgressBar)
-        // Example: If you have a ProgressBar in your layout, toggle its visibility
-        // progressBar.visibility = if (show) View.VISIBLE else View.GONE
+
     }
 }

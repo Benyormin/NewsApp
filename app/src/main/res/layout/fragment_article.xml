@@ -22,8 +22,33 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:contentDescription="bookmark"
-        android:src="@drawable/bookmarks_24dp"
+        android:src="@drawable/bookmark_24dp_black"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSummarize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="Summarize"
+        android:src="@drawable/smart_toy_24dp_"
+        app:fabSize="normal"
+
+        app:layout_constraintBottom_toTopOf="@+id/fabBookmark"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fabSummarize" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
