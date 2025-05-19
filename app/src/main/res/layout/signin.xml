@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:minHeight="48dp"
-        android:onClick="registerIntent"
+
         android:text="Don't have an account? | Sign up"
         android:gravity="center"
         android:textColor="@color/Secondary"
@@ -81,7 +81,7 @@
         android:id="@+id/btnGoogleSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="signInWithGoogle"
+
         android:background="@drawable/custom_btn"
         android:layout_marginTop="68dp"
         android:layout_marginBottom="168dp"

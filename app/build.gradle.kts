@@ -74,7 +74,7 @@ dependencies {
     // Glide for image loading
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation ("com.github.bumptech.glide:okhttp3-integration:4.16.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    kapt("com.github.bumptech.glide:compiler:4.12.0")
 
     implementation ("androidx.exifinterface:exifinterface:1.2.0")
 
@@ -119,17 +119,7 @@ dependencies {
     // HTML Parsing
     implementation("org.jsoup:jsoup:1.17.2")
 
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
 
-
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.firebase:firebase-auth-ktx")
-
-    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
 
 
 

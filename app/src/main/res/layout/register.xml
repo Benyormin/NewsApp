@@ -28,7 +28,7 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:minHeight="48dp"
-        android:onClick="signInIntent"
+
         android:text="Already have an account? | Sign in"
         android:textColor="@color/Secondary"
         app:layout_constraintStart_toStartOf="parent"
