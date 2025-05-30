@@ -26,4 +26,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "NewsApp"
 include(":app")
- 
+
+

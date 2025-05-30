@@ -9,17 +9,18 @@
 
 
     <EditText
-        android:id="@+id/etPasswordRegister"
+        android:id="@+id/etPasswordSignIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="Enter your password"
+        android:inputType="textPassword"
         android:minHeight="48dp"
         android:textColor="@color/Secondary"
         android:textColorHint="@color/Secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEmailRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/etEmailSignIn" />
 
     <TextView
         android:id="@+id/textView"
@@ -32,10 +33,10 @@
         android:gravity="center"
         android:textColor="@color/Secondary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSignIn" />
 
     <EditText
-        android:id="@+id/etEmailRegister"
+        android:id="@+id/etEmailSignIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="88dp"
@@ -64,7 +65,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnRegister"
+        android:id="@+id/btnSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -75,7 +76,7 @@
         android:textStyle="bold"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPasswordRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/etPasswordSignIn" />
 
     <LinearLayout
         android:id="@+id/btnGoogleSignIn"

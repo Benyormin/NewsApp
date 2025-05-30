@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         val startDestination = if (isFirstTime) {
             sharedPreferences.edit().putBoolean("isFirstTime", false).apply()
             R.id.registerFragment
+            //TODO: I should remove the bottom nav bar for the aesthetics
         } else {
             R.id.homeFragment
         }

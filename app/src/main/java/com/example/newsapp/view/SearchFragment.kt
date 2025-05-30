@@ -1,6 +1,6 @@
 package com.example.newsapp.view
 
-import NewsRepository
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION_CODES.N
@@ -25,6 +25,7 @@ import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.model.NewsData
+import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.viewmodel.NewsViewModel
 import kotlinx.coroutines.launch
 

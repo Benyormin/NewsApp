@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="Enter your password"
+        android:inputType="textPassword"
         android:minHeight="48dp"
         android:textColor="@color/black"
         android:textColorHint="@color/Secondary"
@@ -79,7 +80,7 @@
         android:id="@+id/btnGoogleSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="signInWithGoogle"
+
         android:background="@drawable/custom_btn"
         style="@style/CustomButtonStyle"
         android:layout_marginTop="68dp"

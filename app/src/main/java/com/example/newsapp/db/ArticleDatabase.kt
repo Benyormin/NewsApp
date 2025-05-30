@@ -13,7 +13,7 @@ import com.example.newsapp.utils.Converters
 
 @Database(
     entities = [NewsData::class, RssUrl::class, Preferences::class],
-    version = 1
+    version = 1, exportSchema = false
 )
 
 @TypeConverters(Converters::class)

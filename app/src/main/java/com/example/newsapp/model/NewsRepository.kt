@@ -1,3 +1,5 @@
+package com.example.newsapp.repository
+import RssRepository
 import android.content.Context
 import android.util.Log
 import android.widget.Toast

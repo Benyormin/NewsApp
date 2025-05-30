@@ -1,8 +1,8 @@
 package com.example.newsapp.view
 
-import NewsRepository
+
 import com.example.newsapp.viewmodel.NewsViewModel
-import ViewPagerAdapter
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,10 +19,12 @@ import com.example.newsapp.NewsViewModelFactory
 import com.example.newsapp.R
 import com.example.newsapp.RetrofitClient
 import com.example.newsapp.TabItem
+import com.example.newsapp.ViewPagerAdapter
 import com.example.newsapp.databinding.FragmentHomeBinding
 import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsArticle
+import com.example.newsapp.repository.NewsRepository
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import org.apache.commons.net.nntp.Article

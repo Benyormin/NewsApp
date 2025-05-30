@@ -1,6 +1,6 @@
 package com.example.newsapp.viewmodel
 
-import NewsRepository
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 
@@ -13,6 +13,7 @@ import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsArticle
 
 import com.example.newsapp.model.NewsData
+import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
