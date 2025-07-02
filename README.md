@@ -34,6 +34,7 @@ A modern, customizable News App built with Android (Kotlin) that allows users to
 
 - **Frontend**: Android (Kotlin, XML)
 - **Backend**: FastAPI (Python) for summarization [in progress]
+- **Architecture**: MVVM
 - **Authentication**: Firebase Auth
 - **Local Storage**: Room DB
 - **Cloud Storage (planned)**: Firebase Firestore
