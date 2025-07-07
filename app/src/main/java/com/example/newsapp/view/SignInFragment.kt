@@ -11,11 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.newsapp.R
+import com.example.newsapp.RetrofitClient
 import com.example.newsapp.databinding.SigninBinding
+import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
+import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.utils.HelperFuncitons
 import com.example.newsapp.utils.HelperFuncitons.Companion.fetchCategoriesAndRSSFromFireStore
 import com.example.newsapp.utils.HelperFuncitons.Companion.saveCategoriesAndRssToFirestore
@@ -51,6 +54,8 @@ class SignInFragment : Fragment() {
         firebaseAuth = FirebaseAuth.getInstance()
         val viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
 
+
+
         binding.btnGuest.setOnClickListener {
             //navigate to tabsManagement
             val action = SignInFragmentDirections.actionSignInFragmentToTabsManagementFragment()
@@ -74,7 +79,8 @@ class SignInFragment : Fragment() {
                                     val firestore = FirebaseFirestore.getInstance()
                                     saveCategoriesAndRssToFirestore(viewModel, userId, firestore, viewLifecycleOwner)
                                     fetchCategoriesAndRSSFromFireStore(viewModel, userId, firestore)
-
+                                    //sync like states between firestore and room
+                                    viewModel.syncLikesFromFirebaseToRoom()
 
                                     // Navigate to home AFTER syncing
                                     val action = SignInFragmentDirections.actionSignInFragmentToHomeFragment(arrayOf())

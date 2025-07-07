@@ -20,10 +20,12 @@ import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
 import com.example.newsapp.utils.HelperFuncitons.Companion.toMap
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -54,6 +56,65 @@ class NewsRepository(
 
         return dao.getLikedStates().associate { it.url to it.isLiked }
     }
+
+    suspend fun updateLikes(article: NewsData){
+
+        if (article.isLike){
+           saveLikeToFirestore(article)
+        }
+        else {
+            removeLikeFromFirestore(article)
+        }
+        //save it locally
+        dao.upsert(article)
+        Log.d("NewsRepository", "Like has been added with the id of:\n ${article.title} \n id: ${article.uid} \n")
+    }
+
+
+    suspend fun syncLikesFromFirebaseToRoom(){
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val snapshot = firestore.collection("users")
+                .document(userId)
+                .collection("likes")
+                .get()
+                .await()
+
+            val likedUrls = snapshot.documents.mapNotNull { it.toObject(NewsData::class.java) }
+            likedUrls.forEach {article ->
+                dao.upsert(article.copy(isLike = true))
+            }
+        }
+    }
+
+    private fun removeLikeFromFirestore(article: NewsData) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null){
+            firestore.collection("users")
+                .document(userId)
+                .collection("likes")
+                .document(article.articleUrl.hashCode().toString())
+                .delete()
+        }
+    }
+
+    private fun saveLikeToFirestore(article: NewsData) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+
+            firestore.collection("users")
+                .document(userId)
+                .collection("likes")
+                .document(article.articleUrl.hashCode().toString())
+                .set(article)
+
+        }
+
+
+    }
+
+
+
 
     suspend fun addRssUrls(name:String, url:String){
         dao.insertRss(RssUrl(name= name, url = url))
@@ -112,10 +173,6 @@ class NewsRepository(
         }
 
 
-    }
-    suspend fun updateLikes(article: NewsData){
-        dao.upsert(article)
-        Log.d("NewsRepository", "Like has been added with the id of:\n ${article.title} \n id: ${article.uid} \n")
     }
 
     suspend fun deleteArticle(article: NewsData) = dao.deleteArticle(article)

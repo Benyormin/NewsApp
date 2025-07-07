@@ -18,6 +18,7 @@ import com.example.newsapp.utils.Constants
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.util.Collections.addAll
 
@@ -45,7 +46,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     val rssItems: LiveData<List<RssUrl>> = repository.rssUrls
     val userCategories: LiveData<Preferences> = repository.userCategories
 
-    private val _forYouData: LiveData<List<NewsData>> = MutableLiveData<List<NewsData>>()
+    private val _forYouData = MutableLiveData<List<NewsData>>()
     val forYouData: LiveData<List<NewsData>> get() = _forYouData
 
 
@@ -85,6 +86,13 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             repository.updateLikes(article)
         }
     }
+
+    fun syncLikesFromFirebaseToRoom(){
+        viewModelScope.launch {
+            repository.syncLikesFromFirebaseToRoom()
+        }
+    }
+
 
     //viewModel.updateRssUrl(updatedFeed)
     //fun updateRssUrl()
@@ -229,11 +237,49 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
     }
 
-    fun getForYouNews(tabs: List<String>) {
-        // Get an average of the users selected categories( tabs)
-        //TODO:: set up a recommendation system where user get personalized News
+    fun getForYouNews(userCategories: List<String>) {
+        viewModelScope.launch {
+            val likeStatesDeferred = async { repository.getLikeStates() }
 
+            val allArticles = mutableListOf<NewsData>()
+
+            // 1. Trigger category fetches (these update _newsData internally)
+            userCategories.forEach { category ->
+                fetchNewsForCategory(category)
+            }
+
+            // Wait a bit to allow _newsData to update (optional but helps)
+           // delay(800) // Could be adjusted or replaced by a smarter signal
+
+            // 2. Collect articles from updated _newsData
+            val currentNewsMap = newsData.value ?: emptyMap()
+            userCategories.forEach { category ->
+                currentNewsMap[category]?.let { allArticles.addAll(it) }
+            }
+
+            // 3. Trigger RSS fetches
+            rssItems.value?.forEach { rssItem ->
+                fetchRssNews(rssItem.name, rssItem.url)
+            }
+
+            // Wait for RSS data to arrive
+            //delay(800)
+
+            // 4. Collect from _rssNewsData
+            rssItems.value?.forEach { rssItem ->
+                _rssNewsData[rssItem.name]?.value?.let { allArticles.addAll(it) }
+            }
+
+            // 5. Apply like state
+            val liked = likeStatesDeferred.await()
+            val processed = allArticles.distinctBy { it.articleUrl }.map {
+                it.copy(isLike = liked[it.articleUrl] ?: false)
+            }
+
+            _forYouData.value = processed.shuffled()
+        }
     }
+
 
     fun saveBookmarksToRoom(bookmarks: List<NewsData>) {
         viewModelScope.launch(Dispatchers.IO) {

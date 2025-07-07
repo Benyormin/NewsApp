@@ -23,6 +23,8 @@ class HelperFuncitons {
 
     companion object {
 
+
+
         fun saveRSSToFirestore(rssUrl: String, rssName: String, firestore: FirebaseFirestore, userId: String){
             val rssRef = firestore.collection("users").document(userId).collection("rssFeeds")
             val docId = Uri.encode(rssUrl)

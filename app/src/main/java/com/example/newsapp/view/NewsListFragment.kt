@@ -183,7 +183,6 @@ class NewsListFragment : Fragment() {
                     val tabs = it?.categories?: listOf("For you")
                     viewModel.getForYouNews(tabs)
                 }
-
             }
             else if(rssList.any{it.name == category}){
                 viewModel.fetchRssNews(category, rssUrl)
