@@ -20,18 +20,18 @@ import java.util.TimeZone
 )
 data class NewsData (
     var uid: Int? = null,
-    @ColumnInfo(name = "title") @SerializedName("title") val title: String,
-    @ColumnInfo(name = "imageUrl") @SerializedName("urlToImage") val imageUrl: String?,
-    @ColumnInfo(name = "description") @SerializedName("description") val description: String?,
-    @ColumnInfo(name = "Date") @SerializedName("publishedAt") val publishedAt: String?,
-    @PrimaryKey @ColumnInfo(name = "articleUrl") @SerializedName("url") val articleUrl: String,
-    @SerializedName("source") @Embedded val source: Source,
+    @ColumnInfo(name = "title") @SerializedName("title") val title: String = "",
+    @ColumnInfo(name = "imageUrl") @SerializedName("urlToImage") val imageUrl: String? = null,
+    @ColumnInfo(name = "description") @SerializedName("description") val description: String? = null,
+    @ColumnInfo(name = "Date") @SerializedName("publishedAt") val publishedAt: String? = null,
+    @PrimaryKey @ColumnInfo(name = "articleUrl") @SerializedName("url") val articleUrl: String = "",
+    @SerializedName("source") @Embedded val source: Source = Source(),
     @ColumnInfo(name = "isBookmarked")var isBookmarked: Boolean = false,
     @ColumnInfo(name = "isLike") var isLike: Boolean = false
 ) : Parcelable
 
 @Parcelize
 data class Source(
-    @SerializedName("id") val id: String?,
-    @SerializedName("name") val name: String
+    @SerializedName("id") val id: String? = null,
+    @SerializedName("name") val name: String = ""
 ) : Parcelable

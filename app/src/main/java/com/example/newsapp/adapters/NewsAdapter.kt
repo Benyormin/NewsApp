@@ -16,6 +16,7 @@ import com.example.newsapp.R
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.utils.HelperFuncitons
 import com.example.newsapp.viewmodel.NewsViewModel
+
 //FUTURE: add viewModel to this constructor and remove two click items
 class NewsAdapter (private var newsDataList: List<NewsData>,
                    private val onItemClick: (NewsData) -> Unit,

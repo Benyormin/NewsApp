@@ -43,6 +43,8 @@ interface ArticlesDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRss(rssUrl: RssUrl): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(rssList: List<RssUrl>)
 
     @Query("SELECT * FROM rss_urls")
     fun getAllRssUrlStrings(): LiveData<List<RssUrl>>

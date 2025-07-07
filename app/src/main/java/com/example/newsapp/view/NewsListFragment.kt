@@ -134,6 +134,16 @@ class NewsListFragment : Fragment() {
                 }
 
             }
+            else if (category == "For you") {
+                viewModel.forYouData.observe(viewLifecycleOwner) { it ->
+                    if (!it.isNullOrEmpty()) {
+                        updateRecyclerView(it)
+                    } else {
+                        Toast.makeText(requireContext(), "Empty for you news!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
             else if (rssList.any{ it.name == category}){
                 Log.d("NewsListFragment", "rssNewsData.observe has been called")
                 Log.d("NewsListFragment", "rssNewsData.observe${rssList}")
@@ -167,6 +177,13 @@ class NewsListFragment : Fragment() {
 
             if(category == "Football"){
                 viewModel.getFootballNews()
+            }
+            else if( category == "For you"){
+                viewModel.userCategories.observe(viewLifecycleOwner){
+                    val tabs = it?.categories?: listOf("For you")
+                    viewModel.getForYouNews(tabs)
+                }
+
             }
             else if(rssList.any{it.name == category}){
                 viewModel.fetchRssNews(category, rssUrl)

@@ -21,9 +21,13 @@ import com.example.newsapp.adapters.CustomRSSListAdapter
 import com.example.newsapp.databinding.FragmentTabsManagementBinding
 import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
+import com.example.newsapp.utils.HelperFuncitons.Companion.deleteRSSFromFirestore
+import com.example.newsapp.utils.HelperFuncitons.Companion.saveRSSToFirestore
 import com.example.newsapp.viewmodel.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class TabsManagementFragment : Fragment() {
 
@@ -76,6 +80,12 @@ class TabsManagementFragment : Fragment() {
                     "${feed.name} has been deleted",
                     Toast.LENGTH_SHORT
                 ).show()
+                //delete from firestore
+                val user = FirebaseAuth.getInstance()
+                val userId = user.currentUser?.uid
+                if (userId != null) {
+                    deleteRSSFromFirestore(feed.url, feed.name, FirebaseFirestore.getInstance(), userId)
+                }
             })
         rvRss.layoutManager = LinearLayoutManager(requireContext())
         rvRss.adapter = rssFeedAdapter
@@ -113,6 +123,12 @@ class TabsManagementFragment : Fragment() {
             if (url.isNotEmpty() && name.isNotEmpty()) {
                 rssFeedAdapter.addRssFeed(RssUrl(name = name, url = url))
                 viewModel.addRssUrls(name, url)
+                //save into the firestore if possible
+                val firestore = FirebaseFirestore.getInstance()
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                if (userId != null) {
+                    saveRSSToFirestore(url, name, firestore = firestore, userId = userId)
+                }
                 etRssUrl.text.clear()
                 etname.text.clear()
             } else {

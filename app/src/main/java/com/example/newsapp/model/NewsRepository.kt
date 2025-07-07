@@ -18,9 +18,13 @@ import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
+import com.example.newsapp.utils.HelperFuncitons.Companion.toMap
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -37,9 +41,11 @@ class NewsRepository(
     val bookmarkedArticles: LiveData<List<NewsData>> = dao.getBookmarkedArticles()
     val rssUrls: LiveData<List<RssUrl>> = dao.getAllRssUrlStrings()
     val userCategories: LiveData<Preferences> = dao.getAllCategories()
-
+    private val firestore = FirebaseFirestore.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
     suspend fun updateCategories(categories: Preferences){
+
         dao.updateCategories(categories)
         Log.d("NewsRepository", "updated categories")
 
@@ -52,6 +58,10 @@ class NewsRepository(
     suspend fun addRssUrls(name:String, url:String){
         dao.insertRss(RssUrl(name= name, url = url))
     }
+    suspend fun insertRssFeeds(rssList: List<RssUrl>) {
+     //this function should be called after user sign in
+        dao.insertAll(rssList)
+    }
     suspend fun deleteRssUrl(rssUrl: RssUrl){
         dao.deleteRss(rssUrl)
     }
@@ -59,10 +69,49 @@ class NewsRepository(
 
     suspend fun updateBookmark(article: NewsData) {
         Log.d("Bookmark", "News Repo: updateBookmark has been called")
-        //article.isBookmarked = !article.isBookmarked
+
         Log.d("Bookmark", "News Repo: article.isbookmarked = ${article.isBookmarked}")
-        //dao.updateArticle(article)
+        // update article bookmark locally
         dao.upsert(article)
+
+        val user = firebaseAuth.currentUser
+        Log.d("Bookmark", "user is: ${user}")
+
+        if (user != null) {
+            val userId = user.uid
+            Log.d("Bookmark", "User UID: $userId") // this shows actual UID
+
+            val bookmarkRef = firestore
+                .collection("users")
+                .document(userId)
+                .collection("bookmarks")
+                .document(article.articleUrl.hashCode().toString())
+
+            if (article.isBookmarked) {
+
+               bookmarkRef.set(article.toMap())
+                    .addOnSuccessListener {
+                        Log.d("Bookmark", "Successfully saved to Firestore")
+                    }
+                    .addOnFailureListener {
+                        Log.e("Bookmark", "Firestore save failed: ${it.message}")
+                    }
+            } else {
+                bookmarkRef.delete()
+                    .addOnSuccessListener {
+                        Log.d("Bookmark", "Successfully deleted from Firestore")
+                    }
+                    .addOnFailureListener {
+                        Log.e("Bookmark", "Firestore delete failed: ${it.message}")
+                    }
+            }
+
+        }
+        else {
+            Log.e("Bookmark", "User is null — not logged in!")
+        }
+
+
     }
     suspend fun updateLikes(article: NewsData){
         dao.upsert(article)

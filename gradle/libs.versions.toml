@@ -20,6 +20,7 @@ firebaseAuth = "22.3.1"
 credentials = "1.5.0"
 credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
+firebaseFirestoreKtx = "25.1.4"
 
 [libraries]
 android-compiler = { module = "android.arch.persistence.room:compiler", version.ref = "compilerVersion" }
@@ -44,6 +45,7 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

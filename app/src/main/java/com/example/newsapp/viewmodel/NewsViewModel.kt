@@ -15,6 +15,7 @@ import com.example.newsapp.model.NewsArticle
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.utils.Constants
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -43,6 +44,9 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
     val rssItems: LiveData<List<RssUrl>> = repository.rssUrls
     val userCategories: LiveData<Preferences> = repository.userCategories
+
+    private val _forYouData: LiveData<List<NewsData>> = MutableLiveData<List<NewsData>>()
+    val forYouData: LiveData<List<NewsData>> get() = _forYouData
 
 
     fun updateUserPreferences(userPreferences: Preferences){
@@ -224,5 +228,27 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
         }
 
     }
+
+    fun getForYouNews(tabs: List<String>) {
+        // Get an average of the users selected categories( tabs)
+        //TODO:: set up a recommendation system where user get personalized News
+
+    }
+
+    fun saveBookmarksToRoom(bookmarks: List<NewsData>) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            for (article in bookmarks) {
+                toggleBookmark((article))
+            }
+        }
+    }
+
+    fun saveRssFeedsToRoom(rssList: List<RssUrl>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insertRssFeeds(rssList)
+        }
+    }
+
 
 }

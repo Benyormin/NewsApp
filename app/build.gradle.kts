@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -152,13 +153,17 @@ dependencies {
 
     implementation("com.google.firebase:firebase-analytics")
 
+    // for the database usage
+    implementation("com.google.firebase:firebase-firestore:25.1.4")
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
+
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1")
 
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5")
 
     implementation ("com.google.android.gms:play-services-auth:21.3.0")
 
-
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.4")
 
 
 }
