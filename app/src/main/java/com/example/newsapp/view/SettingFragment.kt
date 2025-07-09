@@ -62,7 +62,13 @@ class SettingFragment : Fragment() {
                 val action = SettingFragmentDirections.actionSettingFragmentToSignInFragment()
                 findNavController().navigate(action)
             }
+
+            btnNotification.setOnClickListener {
+                val action = SettingFragmentDirections.actionSettingFragmentToNotificationFragment()
+                findNavController().navigate(action)
+            }
         }
+
     }
 
     override fun onDestroyView() {

@@ -167,6 +167,10 @@ class HomeFragment : Fragment() {
             addAll(userPreferences)
             addAll(rssUrls.map { it.name })
         }
+
+        //add allTabs to the view model so that it can be used in the Notification fragment
+        viewModel.setAllTabs(allTabs)
+
         return allTabs
     }
 

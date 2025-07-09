@@ -38,6 +38,8 @@
             app:argType="com.example.newsapp.model.NewsData"
             app:nullable="false"/>
 
+
+
     </fragment>
 
     <!-- NewsList Fragment -->
@@ -90,6 +92,9 @@
         <action
             android:id="@+id/action_settingFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/tabsManagementFragment"
@@ -123,6 +128,14 @@
             app:destination="@id/tabsManagementFragment" />
         <action
             android:id="@+id/action_signInFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.newsapp.view.NotificationFragment"
+        android:label="NotificationFragment" >
+        <action
+            android:id="@+id/action_notificationFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

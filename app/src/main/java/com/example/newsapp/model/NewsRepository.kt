@@ -30,6 +30,8 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
+
 class NewsRepository(
     private val newsApiService: NewsApiService,
     private val guardianService: GuardianApiService,
@@ -281,21 +283,7 @@ class NewsRepository(
 
     }
 
-/*
-    suspend fun getRssNews(url: String, source: String): LiveData<List<NewsData>> {
-        val liveData = MutableLiveData<List<NewsData>>()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val data = RssRepository(url, source).fetchRssNews()
-                liveData.postValue(data)
-            } catch (e: Exception) {
-             liveData.postValue(emptyList())
-             Log.d("NewsRepository", "Error fetching RSS news: ${e.message}")
-            }
-        }
-        return liveData
-    }
-*/
+
     suspend fun getEspnNews(): List<NewsData> {
             return try {
                 //TODO: change the hardcoded text to changable like esp.1 eng.1 ,...
@@ -377,22 +365,51 @@ class NewsRepository(
         }
     }
 
-    //get sport news
+    suspend fun getForYouArticlesForNotification(): List<NewsData> {
 
-    /**
-     *
-     * Returns football news
-      */
-/*
-    suspend fun getFootballNews(): List<NewsData> {
-        val r2 = guardianService.getGuardianNews(section = "football")
-        val r1 = newsApiService.getNewsByCategory("football")
+        val allArticles = mutableListOf<NewsData>()
 
-        // Combine or process responses as needed
-        return response1.articles + response2.articles + response3.articles
+        // 1. Get user category preferences
+        Log.d("ForYouWorker", "🛠 Getting user preferences...")
+        val preferences = dao.getPreferences()
+        val categories = preferences?.categories?: emptyList()
+       //val pref = userCategories.value
+        //val categories = pref?.categories ?: emptyList()
+        Log.d("ForYouWorker", "📦 Categories: $categories")
+
+        // 2. Fetch articles from categories
+        val news = getNewsForCategories(categories)
+        Log.d("ForYouWorker", "📚 Articles: $news")
+
+        for (n in news){
+            allArticles.addAll(n.value)
+        }
+        Log.d("ForYouWorker", "📚 len all articles in the middle of work \n : ${allArticles.size}")
+
+        // 3. Get user RSS preferences (stored in Room or elsewhere)
+
+        //val rssItems = rssUrls.value ?: emptyList()
+        val rssItems = dao.getAllRssUrls()
+        Log.d("ForYouWorker", "📰 RSS: ${rssItems.size} ")
+
+        for (rss in rssItems) {
+            try {
+                val rssArticles = getRssNews(rss.url, rss.name)
+                allArticles.addAll(rssArticles)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        // 4. Apply like states if possible
+        val likeStates = getLikeStates() // Optional if needed
+        val processed = allArticles.distinctBy { it.articleUrl }.map {
+            it.copy(isLike = likeStates[it.articleUrl] ?: false)
+        }
+        Log.d("ForYouWorker", "🧮 Total articles fetched: ${allArticles.size}")
+        return processed
     }
 
 
-*/
+
 }
-//TODO: Create other class in this package for each API in order to extract text

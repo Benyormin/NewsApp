@@ -46,6 +46,9 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     val rssItems: LiveData<List<RssUrl>> = repository.rssUrls
     val userCategories: LiveData<Preferences> = repository.userCategories
 
+    private val _allTabs = MutableLiveData<List<String>>()
+    val allTabs: LiveData<List<String>> get() = _allTabs
+
     private val _forYouData = MutableLiveData<List<NewsData>>()
     val forYouData: LiveData<List<NewsData>> get() = _forYouData
 
@@ -294,6 +297,10 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertRssFeeds(rssList)
         }
+    }
+
+    fun setAllTabs(tabs: List<String>){
+        _allTabs.value = tabs
     }
 
 

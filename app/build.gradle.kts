@@ -165,5 +165,10 @@ dependencies {
 
     implementation ("com.jakewharton.threetenabp:threetenabp:1.4.4")
 
+    //notifications
+    implementation ("androidx.work:work-runtime-ktx:2.10.2")
+
+
+
 
 }

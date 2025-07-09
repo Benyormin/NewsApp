@@ -48,11 +48,17 @@ interface ArticlesDAO {
 
     @Query("SELECT * FROM rss_urls")
     fun getAllRssUrlStrings(): LiveData<List<RssUrl>>
+
+    @Query("SELECT * FROM rss_urls")
+    suspend fun getAllRssUrls(): List<RssUrl>
     @Delete
     suspend fun deleteRss(rssUrl: RssUrl)
 
     @Query("SELECT * FROM user_preferences WHERE id = 0")
     fun getAllCategories(): LiveData<Preferences>
+
+    @Query("SELECT * FROM user_preferences WHERE id = 0")
+    suspend fun getPreferences(): Preferences?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateCategories(prefs: Preferences): Long

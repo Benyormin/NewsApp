@@ -67,6 +67,7 @@ class ArticleFragment : Fragment() {
 
         // Get the URL from arguments
         val article = args.newsData
+
         if (article.isBookmarked) {
             fabBookmark.setImageResource(R.drawable.bookmark_24dp_black_filled)
         }
