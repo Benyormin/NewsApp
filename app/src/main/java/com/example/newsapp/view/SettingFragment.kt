@@ -1,10 +1,13 @@
 package com.example.newsapp.view
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 
@@ -67,9 +70,31 @@ class SettingFragment : Fragment() {
                 val action = SettingFragmentDirections.actionSettingFragmentToNotificationFragment()
                 findNavController().navigate(action)
             }
+
+
+
+            btnChangeTheme.setOnClickListener {
+                //change theme logic
+
+
+                val currentMode = AppCompatDelegate.getDefaultNightMode()
+
+                val newMode = if (currentMode == AppCompatDelegate.MODE_NIGHT_YES){
+                    AppCompatDelegate.MODE_NIGHT_NO
+                }else{
+                    AppCompatDelegate.MODE_NIGHT_YES
+                }
+
+                AppCompatDelegate.setDefaultNightMode(newMode)
+
+            }
         }
 
+
+
+
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

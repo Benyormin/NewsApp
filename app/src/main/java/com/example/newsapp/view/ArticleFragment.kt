@@ -1,6 +1,5 @@
 package com.example.newsapp.view
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -12,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -24,10 +22,9 @@ import com.example.newsapp.viewmodel.SummaryViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.example.newsapp.RetrofitClient
 import com.example.newsapp.api.UrlRequest
+import com.example.newsapp.utils.ObservableWebView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 
 class ArticleFragment : Fragment() {
@@ -62,6 +59,9 @@ class ArticleFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
         summaryViewModel = ViewModelProvider(requireActivity()).get(SummaryViewModel::class.java)
         fabSummary = view.findViewById(R.id.fabSummarize)
+
+        val webView = view.findViewById<ObservableWebView>(R.id.webView)
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
 
 
@@ -135,7 +135,7 @@ class ArticleFragment : Fragment() {
 
 
             // Load URL into WebView
-            webView = view.findViewById<WebView>(R.id.webView)
+            //webView = view.findViewById<WebView>(R.id.webView)
             if (article.articleUrl.isNullOrEmpty()) {
                 Log.e("Article Fragment ", "URL is null or empty")
             } else {
@@ -162,62 +162,32 @@ class ArticleFragment : Fragment() {
 
             }
 
+        //remove bottom navigation and buttons on scroll
+        webView.scrollChangedCallback = object : ObservableWebView.OnScrollChangedCallback {
+            override fun onScroll(scrollY: Int, oldScrollY: Int) {
+                if (scrollY > oldScrollY) {
+                    // Scrolling down → hide bottom nav
+                    bottomNav.animate().translationY(bottomNav.height.toFloat()).setDuration(200).start()
+                    fabBookmark.hide()
+                    fabSummary.hide()
+                    resetFabMargin(fabBookmark)
+                    resetFabMargin(fabSummary)
 
+                } else if (scrollY < oldScrollY) {
+                    // Scrolling up → show bottom nav
+                    bottomNav.animate().translationY(0f).setDuration(200).start()
+                    fabBookmark.show()
+                    fabSummary.show()
+                    setFabAboveBottomNav(fabBookmark, bottomNav)
+                }
+            }
         }
 
 
-        suspend fun fetchHtmlViaWebView(url: String): String? =
-            suspendCancellableCoroutine { continuation ->
-                val webView = WebView(requireContext()).apply {
-                    settings.javaScriptEnabled = true
-                    webViewClient = object : WebViewClient() {
-                        private var isCompleted = false // Flag to prevent double resumption
-
-                        override fun onPageFinished(view: WebView?, finishedUrl: String?) {
-                            if (isCompleted) return // Skip if already done
-                            isCompleted = true
-
-                            view?.evaluateJavascript("document.documentElement.outerHTML") { html ->
-                                if (continuation.isActive) {
-                                    continuation.resume(
-                                        html?.removeSurrounding("\"") // Remove JSON quotes
-                                    )
-                                }
-                            }
-                        }
-
-                        override fun onReceivedError(
-                            view: WebView?,
-                            errorCode: Int,
-                            description: String?,
-                            failingUrl: String?
-                        ) {
-                            if (isCompleted) return
-                            isCompleted = true
-                            if (continuation.isActive) {
-                                continuation.resume(null)
-                            }
-                            Log.e("WebView", "Error loading URL: $description")
-                        }
-                    }
-                    loadUrl(url)
-                }
-
-                // Cleanup on cancellation
-                continuation.invokeOnCancellation {
-                    webView.destroy()
-                }
-            }
-
-
-/*
-    private fun showLoadingDialog(): androidx.appcompat.app.AlertDialog {
-        return MaterialAlertDialogBuilder(requireContext())
-            .setView(R.layout.dialog_loading) // Create this layout (see below)
-            .setCancelable(false)
-            .create()
     }
-*/
+
+
+
     private fun showSummaryDialog(title: String, summary: String) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
@@ -258,6 +228,24 @@ class ArticleFragment : Fragment() {
             it.show(childFragmentManager, "summary_dialog")
         }
     }
+
+    fun setFabAboveBottomNav(fab: FloatingActionButton, bottomNav: BottomNavigationView, extraDp: Int = 20) {
+        val params = fab.layoutParams as ViewGroup.MarginLayoutParams
+        val density = fab.resources.displayMetrics.density
+
+        // Total margin = BottomNav height in px + extraDp converted to px
+        params.bottomMargin = bottomNav.height + (extraDp * density).toInt()
+        fab.layoutParams = params
+    }
+
+    fun resetFabMargin(fab: FloatingActionButton, originalDp: Int = 20) {
+        val params = fab.layoutParams as ViewGroup.MarginLayoutParams
+        val density = fab.resources.displayMetrics.density
+        params.bottomMargin = (originalDp * density).toInt()
+        fab.layoutParams = params
+    }
+
+
 
 
 }

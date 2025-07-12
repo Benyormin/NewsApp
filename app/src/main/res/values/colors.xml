@@ -12,4 +12,5 @@
     <color name="lavender">#8692f7</color>
     <color name="gray">#808080</color>
     <color name="error">#A4172F</color>
+    <color name="myFragmentBackground">#FFFFFFFF</color>
 </resources>
