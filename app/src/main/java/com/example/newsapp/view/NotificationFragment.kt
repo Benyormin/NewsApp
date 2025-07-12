@@ -35,15 +35,28 @@ class NotificationFragment : Fragment() {
         val newsViewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
         newsViewModel.allTabs.observe(viewLifecycleOwner){
             prefs->
-            notificationViewModel.loadPreferences(prefs)
+            notificationViewModel.loadPreferences(requireContext(), prefs)
 
             notificationViewModel.notificationPreferences.observe(viewLifecycleOwner) {
                 preferences ->
                 val adapter = NotificationSettingsAdapter(preferences) { item ->
-                    notificationViewModel.updatePreference(item)
+                    notificationViewModel.updatePreference(item, requireContext())
                     if (item.category == "For you") {
                         notificationViewModel.onForYouNotificationToggleChanged(item.isEnabled, requireContext())
+                    }else{
+                        val rssUrl = newsViewModel.getRssUrlByName(item.category)
+                        if (rssUrl != null) {
+                            notificationViewModel.onRssToggleChanged(
+                                category = item.category,
+                                url = rssUrl,
+                                enabled = item.isEnabled,
+                                context = requireContext()
+                            )
+                        }
                     }
+                    //here should be called
+
+
                 }
                 binding.notificationRecyclerView.adapter = adapter
                 binding.notificationRecyclerView.layoutManager = LinearLayoutManager(requireContext())

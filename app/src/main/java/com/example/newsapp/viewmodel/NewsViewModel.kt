@@ -19,6 +19,11 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Collections.addAll
 
@@ -52,6 +57,9 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     private val _forYouData = MutableLiveData<List<NewsData>>()
     val forYouData: LiveData<List<NewsData>> get() = _forYouData
 
+    private val _categoryLoadingStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    private val _rssLoadingStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+
 
     fun updateUserPreferences(userPreferences: Preferences){
         viewModelScope.launch {
@@ -77,6 +85,13 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             repository.deleteRssUrl(rssUrl)
         }
     }
+
+
+    fun getRssUrlByName(name: String): String? {
+        return rssItems.value?.find { it.name == name }?.url
+    }
+
+
     fun toggleBookmark(article: NewsData) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("Bookmark", "Toggle bookmark has been called")
@@ -115,6 +130,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
      *  fetch news from NewsAPI service
      */
     fun fetchNewsForCategory(category: String) {
+        _categoryLoadingStates.update { it + (category to true) }
         viewModelScope.launch {
             val currentData = _newsData.value ?: emptyMap()
             val newData = async{ repository.getNewsByCategory(category) }
@@ -142,6 +158,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
                 put(category, shuffled)
             }
             _newsData.value = updatedData
+            _categoryLoadingStates.update { it + (category to false) }
         }
     }
 
@@ -152,6 +169,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     }
 
     fun fetchRssNews(category: String, url: String) {
+        _rssLoadingStates.update { it + (category to true) }
         viewModelScope.launch {
             // Get raw list from repository
             CategoryInitialized(category)
@@ -165,6 +183,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
 
             _rssNewsData[category]?.postValue(newsList)
+            _rssLoadingStates.update {it + (category to false)}
         }
     }
 
@@ -240,6 +259,41 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
     }
 
+
+    fun getForYouNews(userCategories: List<String>) {
+        viewModelScope.launch {
+            val likeStatesDeferred = async { repository.getLikeStates() }
+
+            // Clear previous flags
+            _categoryLoadingStates.value = userCategories.associateWith { true }
+            _rssLoadingStates.value = rssItems.value?.associate { it.name to true } ?: emptyMap()
+
+            // Trigger fetches
+            userCategories.forEach { fetchNewsForCategory(it) }
+            rssItems.value?.forEach { fetchRssNews(it.name, it.url) }
+
+            // Wait until all flags become false
+            combine(_categoryLoadingStates, _rssLoadingStates) { catFlags, rssFlags ->
+                val allCatDone = catFlags.values.all { !it }
+                val allRssDone = rssFlags.values.all { !it }
+                allCatDone && allRssDone
+            }.filter { it }.first()
+
+            // Once all done, combine the data
+            val allArticles = mutableListOf<NewsData>()
+            newsData.value?.forEach { (category, list) -> allArticles.addAll(list) }
+            _rssNewsData.forEach { (_, liveData) -> liveData.value?.let { allArticles.addAll(it) } }
+
+            // 5. Apply like state
+            val liked = likeStatesDeferred.await()
+            val processed = allArticles.distinctBy { it.articleUrl }.map {
+                it.copy(isLike = liked[it.articleUrl] ?: false)
+            }
+            _forYouData.value = processed
+        }
+    }
+
+    /*
     fun getForYouNews(userCategories: List<String>) {
         viewModelScope.launch {
             val likeStatesDeferred = async { repository.getLikeStates() }
@@ -282,6 +336,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             _forYouData.value = processed.shuffled()
         }
     }
+    */
 
 
     fun saveBookmarksToRoom(bookmarks: List<NewsData>) {

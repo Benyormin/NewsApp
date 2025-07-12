@@ -44,6 +44,8 @@ class ForYouNotificationWorker(
 
             // Step 3: Show notification
             NotificationHelper.showForYouNotification(context, latest)
+            //NotificationHelper.buildNotification(context, latest)
+
 
             return Result.success()
         } catch (e: Exception) {

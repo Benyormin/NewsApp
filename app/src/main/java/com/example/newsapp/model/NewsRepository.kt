@@ -118,9 +118,11 @@ class NewsRepository(
 
 
 
+
     suspend fun addRssUrls(name:String, url:String){
         dao.insertRss(RssUrl(name= name, url = url))
     }
+
     suspend fun insertRssFeeds(rssList: List<RssUrl>) {
      //this function should be called after user sign in
         dao.insertAll(rssList)
