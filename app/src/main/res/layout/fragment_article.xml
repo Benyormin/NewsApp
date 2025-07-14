@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="83dp"
         android:contentDescription="bookmark"
         android:src="@drawable/bookmark_24dp_black"
         app:fabSize="normal"

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ import com.example.newsapp.model.NewsData
 import com.example.newsapp.utils.HelperFuncitons.Companion.saveCategoriesAndRssToFirestore
 import com.example.newsapp.utils.HelperFuncitons.Companion.toMap
 import com.example.newsapp.viewmodel.NewsViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.integrity.internal.f
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,10 +46,15 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
 
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.visibility = View.GONE
+
+
         binding.btnGuest.setOnClickListener {
             //navigate to tabsManagement
             val action = RegisterFragmentDirections.actionRegisterFragmentToTabsManagementFragment()
             findNavController().navigate(action)
+            bottomNav.visibility = View.VISIBLE
         }
 
         binding.btnRegister.setOnClickListener {
@@ -74,6 +81,7 @@ class RegisterFragment : Fragment() {
 
                         val action = RegisterFragmentDirections.actionRegisterFragmentToTabsManagementFragment()
                         findNavController().navigate(action)
+                        bottomNav.visibility = View.VISIBLE
                     }else{
                         Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_SHORT).show()
                         Log.e("RegisterFragment", it.exception.toString())

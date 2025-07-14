@@ -24,6 +24,7 @@ import com.example.newsapp.db.RssUrl
 import com.example.newsapp.utils.HelperFuncitons.Companion.deleteRSSFromFirestore
 import com.example.newsapp.utils.HelperFuncitons.Companion.saveRSSToFirestore
 import com.example.newsapp.viewmodel.NewsViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
@@ -62,6 +63,9 @@ class TabsManagementFragment : Fragment() {
         val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
         viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
         addAllButtons()
+
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.visibility = View.GONE
 
 
 
@@ -162,14 +166,17 @@ class TabsManagementFragment : Fragment() {
                     setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.error))
                     setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                 }.show()
+
             }
             else{
                 viewModel.updateUserPreferences(Preferences(0, userPreference))
                 val action= TabsManagementFragmentDirections.
                 actionTabsManagementFragmentToHomeFragment(userPreference.toTypedArray())
                 findNavController().navigate(action)
+                bottomNav.visibility = View.VISIBLE
 
             }
+
 
 
         }

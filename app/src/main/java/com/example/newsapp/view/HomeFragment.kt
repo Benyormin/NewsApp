@@ -25,6 +25,7 @@ import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsArticle
 import com.example.newsapp.repository.NewsRepository
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import org.apache.commons.net.nntp.Article
@@ -72,6 +73,10 @@ class HomeFragment : Fragment() {
     // interact with our views
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.visibility = View.VISIBLE
+
         btnCustomizeTabs = view.findViewById(R.id.btnMoreOptions)
         val database = ArticleDatabase.invoke(requireContext())
         val dao = database.getArticleDao()

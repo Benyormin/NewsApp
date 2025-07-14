@@ -42,7 +42,6 @@ class ArticleFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -62,6 +61,7 @@ class ArticleFragment : Fragment() {
 
         val webView = view.findViewById<ObservableWebView>(R.id.webView)
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.visibility = View.VISIBLE
 
 
 

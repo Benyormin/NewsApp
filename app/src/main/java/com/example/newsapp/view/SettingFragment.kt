@@ -76,8 +76,11 @@ class SettingFragment : Fragment() {
             btnChangeTheme.setOnClickListener {
                 //change theme logic
 
+                val action = SettingFragmentDirections.actionSettingFragmentToAppearanceFragment()
+                findNavController().navigate(action)
 
-                val currentMode = AppCompatDelegate.getDefaultNightMode()
+
+                /*val currentMode = AppCompatDelegate.getDefaultNightMode()
 
                 val newMode = if (currentMode == AppCompatDelegate.MODE_NIGHT_YES){
                     AppCompatDelegate.MODE_NIGHT_NO
@@ -86,7 +89,7 @@ class SettingFragment : Fragment() {
                 }
 
                 AppCompatDelegate.setDefaultNightMode(newMode)
-
+                */
             }
         }
 

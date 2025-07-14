@@ -1,10 +1,17 @@
 package com.example.newsapp.view
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.graphics.drawable.DrawableCompat.applyTheme
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -18,15 +25,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
 import com.jakewharton.threetenabp.AndroidThreeTen
 
+
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppearanceFragment.applyTheme(this, this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
+
+
 
         //for getting relative time:
         AndroidThreeTen.init(this)
@@ -36,6 +50,9 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
         val isFirstTime = sharedPreferences.getBoolean("isFirstTime", true)
 
+        if (isFirstTime){
+            sharedPreferences.edit().putString("selected_theme", "light").apply()
+        }
 
 
 
@@ -57,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         val startDestination = if (isFirstTime) {
             sharedPreferences.edit().putBoolean("isFirstTime", false).apply()
             R.id.registerFragment
-            //TODO: I should remove the bottom nav bar for the aesthetics
+
         } else {
             R.id.homeFragment
         }
@@ -68,13 +85,15 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
 
-       // findViewById<BottomNavigationView>(R.id.bottomNavigationView).setupWithNavController(navController)
+
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             Log.d("NavDebug", "Current destination: ${destination.label}")
         }
 
     }
+
+
 
 
 

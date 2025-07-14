@@ -24,6 +24,7 @@ import com.example.newsapp.utils.HelperFuncitons.Companion.fetchCategoriesAndRSS
 import com.example.newsapp.utils.HelperFuncitons.Companion.saveCategoriesAndRssToFirestore
 import com.example.newsapp.utils.HelperFuncitons.Companion.toMap
 import com.example.newsapp.viewmodel.NewsViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -54,12 +55,15 @@ class SignInFragment : Fragment() {
         firebaseAuth = FirebaseAuth.getInstance()
         val viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
 
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.visibility = View.GONE
 
 
         binding.btnGuest.setOnClickListener {
             //navigate to tabsManagement
             val action = SignInFragmentDirections.actionSignInFragmentToTabsManagementFragment()
             findNavController().navigate(action)
+            bottomNav.visibility = View.VISIBLE
         }
 
         binding.btnSignIn.setOnClickListener {
@@ -86,7 +90,7 @@ class SignInFragment : Fragment() {
                                     val action = SignInFragmentDirections.actionSignInFragmentToHomeFragment(arrayOf())
                                     findNavController().navigate(action)
                                 }
-
+                                bottomNav.visibility = View.VISIBLE
 
 
 
