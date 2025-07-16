@@ -98,6 +98,9 @@
         <action
             android:id="@+id/action_settingFragment_to_appearanceFragment"
             app:destination="@id/appearanceFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_addsFragment"
+            app:destination="@id/addsFragment" />
     </fragment>
     <fragment
         android:id="@+id/tabsManagementFragment"
@@ -146,4 +149,9 @@
         android:name="com.example.newsapp.view.AppearanceFragment"
         android:label="fragment_appearance"
         tools:layout="@layout/fragment_appearance" />
+    <fragment
+        android:id="@+id/addsFragment"
+        android:name="com.example.newsapp.view.AddsFragment"
+        android:label="fragment_adds"
+        tools:layout="@layout/fragment_adds" />
 </navigation>

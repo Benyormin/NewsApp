@@ -70,6 +70,8 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.firebase.firestore.ktx)
+    //implementation(libs.play.services.ads.api)
+    //implementation(libs.ads.mobile.sdk)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -168,6 +170,9 @@ dependencies {
     //notifications
     implementation ("androidx.work:work-runtime-ktx:2.10.2")
 
+
+    //google ads
+    implementation("com.google.android.gms:play-services-ads:24.4.0")
 
 
 

@@ -91,6 +91,12 @@ class SettingFragment : Fragment() {
                 AppCompatDelegate.setDefaultNightMode(newMode)
                 */
             }
+
+
+            btnAdd.setOnClickListener {
+                val action = SettingFragmentDirections.actionSettingFragmentToAddsFragment()
+                findNavController().navigate(action)
+            }
         }
 
 

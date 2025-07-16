@@ -60,6 +60,14 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     private val _categoryLoadingStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     private val _rssLoadingStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
+    private val _isSubscribed = MutableLiveData(false)
+    val isSubscribed: LiveData<Boolean> = _isSubscribed
+
+
+    fun setSubscriptionStatus(subscribed: Boolean){
+        _isSubscribed.value = subscribed
+    }
+
 
     fun updateUserPreferences(userPreferences: Preferences){
         viewModelScope.launch {

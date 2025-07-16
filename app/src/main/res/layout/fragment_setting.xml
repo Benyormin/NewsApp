@@ -121,6 +121,15 @@
             android:text="Sign In"
             android:textAllCaps="false"
             android:layout_marginBottom="12dp"/>
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/CustomButtonStyle"
+            android:text="Test add"
+            android:textAllCaps="false"
+            android:layout_marginBottom="12dp"/>
+
 
 
     </LinearLayout>
