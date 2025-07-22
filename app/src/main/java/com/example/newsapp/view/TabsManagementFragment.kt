@@ -3,6 +3,7 @@ package com.example.newsapp.view
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import com.example.newsapp.viewmodel.NewsViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.play.integrity.internal.i
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -52,6 +54,12 @@ class TabsManagementFragment : Fragment() {
         _binding = FragmentTabsManagementBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    private val reserved = mutableSetOf<String>()  // Use a set for better performance and uniqueness
+    private val defaultReservedNames = listOf(
+        "for you", "technology", "science", "environment", "business", "health", "education", "games",
+        "crypto", "sports", "football", "books", "politics", "food"
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -95,6 +103,10 @@ class TabsManagementFragment : Fragment() {
         rvRss.adapter = rssFeedAdapter
 
 
+        reserved.clear()
+        reserved.addAll(defaultReservedNames)
+
+
         viewModel.rssItems.observe(viewLifecycleOwner) { it ->
             if (!it.isNullOrEmpty()) {
                 rssUrls = it.toMutableList()
@@ -102,7 +114,10 @@ class TabsManagementFragment : Fragment() {
             } else {
                 rssUrls = emptyList<RssUrl>().toMutableList()
                 rssFeedAdapter.updateData(rssUrls)
+
             }
+            reserved.addAll(it.map { it.name.lowercase() })
+            Log.d("Reserved", "Current reserved: $reserved")
 
         }
         //set style of selected buttons
@@ -120,11 +135,45 @@ class TabsManagementFragment : Fragment() {
         }
 
 
+
+        /*
+            for(i in rssUrls){
+            reserved.add(i.name)
+        }
+        */
+
+        Log.d("Reserved", "$reserved")
+
         btnAdd.setOnClickListener {
             val url = etRssUrl.text.toString().trim()
             val name = etname.text.toString().trim()
-            //TODO: Check if the Url is valid
-            if (url.isNotEmpty() && name.isNotEmpty()) {
+
+
+
+            if(url.isEmpty() ||  name.isEmpty()){
+                if (url.isEmpty()) {
+                    etRssUrl.error = "Please enter a URL"
+                }
+                if (name.isEmpty()) {
+                    etname.error = "Please enter a name"
+                }
+
+                Snackbar.make(view, "please enter both URL and name", Snackbar.LENGTH_SHORT).apply {
+                    setAction("Ok") {
+                        dismiss()
+                    }
+                    setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.error))
+                    setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                }.show()
+            }
+            else if (! url.startsWith("http", ignoreCase = true) || !Patterns.WEB_URL.matcher(url).matches()){
+                etRssUrl.error = "Please Enter a valid URL. URL should starts with http://"
+            }
+            else if (name.lowercase() in reserved){
+                //User shouldn't use a reserved name ( categories or the current Rss items)
+                etname.error = "There is already a category with similar name. Try a different name!"
+            }
+            else if (url.isNotEmpty() && name.isNotEmpty()) {
                 rssFeedAdapter.addRssFeed(RssUrl(name = name, url = url))
                 viewModel.addRssUrls(name, url)
                 //save into the firestore if possible
@@ -135,21 +184,6 @@ class TabsManagementFragment : Fragment() {
                 }
                 etRssUrl.text.clear()
                 etname.text.clear()
-            } else {
-                if (url.isEmpty()) {
-                    etRssUrl.error = "Please enter a URL"
-                }
-                if (name.isEmpty()) {
-                    etname.error = "Please enter a name"
-                }
-                Snackbar.make(view, "please enter both URL and name", Snackbar.LENGTH_SHORT).apply {
-                    setAction("Ok") {
-                        dismiss()
-                    }
-                    setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.error))
-                    setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                }.show()
-
             }
 
 
@@ -161,8 +195,8 @@ class TabsManagementFragment : Fragment() {
                     userPreference.add(btn.text.toString())
                 }
             }
-            if (userPreference.size < 2){
-                Snackbar.make(view, "You must at least pick two categories", Snackbar.LENGTH_SHORT).apply {
+            if (userPreference.size < 1){
+                Snackbar.make(view, "You must at least pick one category", Snackbar.LENGTH_SHORT).apply {
                     setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.error))
                     setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                 }.show()
@@ -183,7 +217,7 @@ class TabsManagementFragment : Fragment() {
 
 
         btnBack.setOnClickListener {
-            Toast.makeText(requireContext(), "clicked", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "clicked", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
 
         }

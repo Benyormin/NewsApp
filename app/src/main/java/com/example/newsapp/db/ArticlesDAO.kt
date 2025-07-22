@@ -18,7 +18,10 @@ interface ArticlesDAO {
     data class LikeState(
         @ColumnInfo(name = "articleUrl") val url: String,
         @ColumnInfo(name = "isLike") val isLiked: Boolean,
+        @ColumnInfo(name = "category") val category: String
     )
+
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(article: NewsData): Long
@@ -37,8 +40,14 @@ interface ArticlesDAO {
     @Query("SELECT * FROM articles WHERE isBookmarked = 1")
     fun getBookmarkedArticles(): LiveData<List<NewsData>>
 
+    /*
     @Query("SELECT articleUrl, isLike FROM articles WHERE isLike = 1")
     suspend fun getLikedStates(): List<LikeState>
+    */
+
+    @Query("SELECT articleUrl, isLike, category FROM articles WHERE isLike = 1")
+    suspend fun getLikedStates(): List<LikeState>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRss(rssUrl: RssUrl): Long

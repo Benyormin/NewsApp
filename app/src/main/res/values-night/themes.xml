@@ -4,6 +4,20 @@
         <!-- Customize your dark theme here. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
+
+        <item name="myHeadlines">@color/headlines</item>
+        <item name="myPrimary">@color/Primary</item>
+        <item name="mySecondary">@color/Secondary</item>
+        <item name="myCardBackground">@color/cardViewBackground</item>
+        <item name="myFragmentBackground">@color/myFragmentBackground</item>
+        <item name="myAccent">@color/accent</item>
+        <item name="myTitle">#cccccc</item>
+        <item name="buttonBackground">@color/Secondary</item>
+        <item name="buttonTextColor">@color/black</item>
+        <item name="colorOnBackground">@color/gray</item>
+        <item name="searchViewTextColor">@color/black</item>
+
+
     </style>
     <style name="Theme.NewsApp" parent="Base.Theme.NewsApp" />
 </resources>

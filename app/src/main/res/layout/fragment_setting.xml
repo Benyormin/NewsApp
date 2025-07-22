@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    tools:context=".view.SettingFragment">
+    tools:context=".view.SettingFragment"
+    android:background="?attr/myFragmentBackground">
 
     <!-- Settings Title -->
     <TextView
@@ -14,9 +15,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Setting Fragment"
+
         android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="#222222"
+        android:textColor="?attr/myTitle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -40,7 +42,7 @@
             android:text="Please Sign in"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#444444"/>
+            android:textColor="?attr/myTitle"/>
 
         <Button
             android:id="@+id/btnSignOut"

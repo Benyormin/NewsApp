@@ -1,10 +1,12 @@
 package com.example.newsapp.utils
 
 import android.content.Context
+import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.example.newsapp.worker.CategoryNotificationWorker
 import com.example.newsapp.worker.ForYouNotificationWorker
 import com.example.newsapp.worker.RssUpdateWorker
 import java.util.concurrent.TimeUnit
@@ -54,5 +56,30 @@ object NotificationScheduler {
     fun cancelRssUpdateWorker(context: Context, category: String) {
         WorkManager.getInstance(context).cancelUniqueWork("rss_worker_$category")
     }
+
+    fun scheduleCategoryNotification(context: Context, category: String) {
+        val input = Data.Builder()
+            .putString("category", category)
+            .build()
+
+        val request = PeriodicWorkRequestBuilder<CategoryNotificationWorker>(
+            1, TimeUnit.DAYS
+        )
+            .addTag("category_notif_$category")
+            .setInputData(input)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "notif_work_$category",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
+    }
+
+    fun cancelCategoryNotification(context: Context, category: String) {
+        WorkManager.getInstance(context).cancelAllWorkByTag("category_notif_$category")
+    }
+
+
 
 }

@@ -15,7 +15,8 @@
         android:text="Name"
         android:textColor="@color/Secondary"
         android:textSize="16sp"
-        android:layout_marginRight="4dp"/>
+        android:layout_marginRight="4dp"
+        android:textColorHint="?attr/myTitle"/>
     <TextView
         android:id="@+id/tvRssUrl"
         android:layout_width="0dp"
@@ -25,7 +26,8 @@
         android:textAllCaps="false"
         android:textColor="@color/Secondary"
         android:textSize="16sp"
-        android:inputType="textUri"/>
+        android:inputType="textUri"
+        android:textColorHint="?attr/myTitle"/>
 
     <!-- Edit Button -->
     <ImageButton

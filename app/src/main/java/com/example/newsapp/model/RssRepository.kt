@@ -24,10 +24,15 @@ class RssRepository(private val rssUrl: String, private val source: String) {
                 try {
                     val request = Request.Builder()
                         .url(rssUrl)
+                        .header(
+                                "User-Agent",
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+                        )
                         .build()
 
                     Log.d("RssRepository", "Executing request (attempt ${retryCount + 1})...")
                     val response = client.newCall(request).execute()
+                    Log.d("RssRepository", "URL: $rssUrl")
                     Log.d("RssRepository", "Response code: ${response.code}")
 
                     if (!response.isSuccessful) {

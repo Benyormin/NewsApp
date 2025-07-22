@@ -2,6 +2,7 @@ package com.example.newsapp.view
 
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build.VERSION_CODES.N
 import android.os.Bundle
@@ -9,9 +10,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -64,6 +67,15 @@ class SearchFragment : Fragment() {
         searchView = view.findViewById(R.id.searchView)
         searchRv = view.findViewById(R.id.searchRv)
         tvSearch = view.findViewById(R.id.tvSearch)
+
+
+      /*  val searchEditText = searchView.findViewById<EditText>(
+            androidx.appcompat.R.id.search_src_text
+        )
+        val isDark = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
+        val textColor = ContextCompat.getColor(requireContext(), if (isDark) R.color.white else R.color.black)
+        searchEditText.setTextColor(textColor) */
 
         adapter = NewsAdapter(emptyList(),
             onItemClick = { newsItem ->

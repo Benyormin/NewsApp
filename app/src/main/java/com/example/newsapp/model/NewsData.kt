@@ -27,7 +27,8 @@ data class NewsData (
     @PrimaryKey @ColumnInfo(name = "articleUrl") @SerializedName("url") val articleUrl: String = "",
     @SerializedName("source") @Embedded val source: Source = Source(),
     @ColumnInfo(name = "isBookmarked")var isBookmarked: Boolean = false,
-    @ColumnInfo(name = "isLike") var isLike: Boolean = false
+    @ColumnInfo(name = "isLike") var isLike: Boolean = false,
+    @ColumnInfo(name = "category") var category: String = ""
 ) : Parcelable
 
 @Parcelize

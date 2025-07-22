@@ -1,6 +1,8 @@
 package com.example.newsapp.view
 
 
+import android.content.res.Configuration
+import android.graphics.Color
 import com.example.newsapp.viewmodel.NewsViewModel
 
 import android.os.Bundle
@@ -10,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -76,8 +79,27 @@ class HomeFragment : Fragment() {
 
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNav.visibility = View.VISIBLE
-
         btnCustomizeTabs = view.findViewById(R.id.btnMoreOptions)
+
+
+        val isDark = when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_YES -> true
+            AppCompatDelegate.MODE_NIGHT_NO -> false
+            else -> false
+        }
+
+        Log.d("HomeFragment", "is dark? : $isDark")
+        if (isDark) {
+            btnCustomizeTabs.setBackgroundColor(Color.BLACK)
+            btnCustomizeTabs.setImageResource(R.drawable.list_24dp_white)
+        } else {
+            btnCustomizeTabs.setBackgroundColor(Color.WHITE)
+            btnCustomizeTabs.setImageResource(R.drawable.list_16dp_black)
+        }
+
+
+
+
         val database = ArticleDatabase.invoke(requireContext())
         val dao = database.getArticleDao()
         val repository = NewsRepository(RetrofitClient.newsApiService,

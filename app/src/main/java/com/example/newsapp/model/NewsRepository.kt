@@ -18,12 +18,31 @@ import com.example.newsapp.db.Preferences
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.model.Source
+import com.example.newsapp.utils.Constants.Companion.CBSSPORT_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.COINTELEGRAPH_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.COMPUTERWEEKLY_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.CRYPTOPODCAST_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.ENVIRONMENTALFACTOR_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.GRIST_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.SCIENCEDAILYHEALTH_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.SCIENCEDAILY_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.SPORTSTAR_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.TECHREPUBLIC_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.TEDTALK_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.THEGAMER_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.WIREDBUSINESS_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.WIREDSCIENCE_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.WIRED_RSS_URL
+import com.example.newsapp.utils.Constants.Companion.YAHOOSPORTS_RSS_URL
 import com.example.newsapp.utils.HelperFuncitons.Companion.toMap
+import com.example.newsapp.utils.safeAwait
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -68,6 +87,11 @@ class NewsRepository(
             removeLikeFromFirestore(article)
         }
         //save it locally
+
+        if (article.category.isBlank()) {
+            Log.w("NewsRepository", "Article has no category. Cannot record like for top-category tracking.")
+        }
+
         dao.upsert(article)
         Log.d("NewsRepository", "Like has been added with the id of:\n ${article.title} \n id: ${article.uid} \n")
     }
@@ -281,7 +305,9 @@ class NewsRepository(
     {
         val rssRepository = RssRepository(url, source)
         Log.d("News Repository","get ${source} news has been called")
+
         return rssRepository.fetchRssNews()
+
 
     }
 
@@ -411,6 +437,92 @@ class NewsRepository(
         Log.d("ForYouWorker", "🧮 Total articles fetched: ${allArticles.size}")
         return processed
     }
+
+
+    suspend fun getRssForCategory(category: String): List<NewsData> = coroutineScope {
+        val rssSources = when (category.lowercase()) {
+            "technology" -> listOf(
+                async { getRssNews(WIRED_RSS_URL, "Wired") },
+                async { getRssNews(COMPUTERWEEKLY_RSS_URL, "Computer Weekly") },
+            )
+            "science" -> listOf(
+                async { getRssNews(WIREDSCIENCE_RSS_URL, "Wired") },
+                async { getRssNews(SCIENCEDAILY_RSS_URL, "Science Daily") }
+            )
+            "environment" -> listOf(
+                async { getRssNews(GRIST_RSS_URL, "Grist") }
+            )
+            "business" -> listOf(
+                async { getRssNews(TECHREPUBLIC_RSS_URL, "Tech Republic") },
+                async { getRssNews(WIREDBUSINESS_RSS_URL, "Wired")}
+            )
+            "health" -> listOf(
+                async{getRssNews(SCIENCEDAILYHEALTH_RSS_URL, "Science Daily")},
+                async { getRssNews(ENVIRONMENTALFACTOR_RSS_URL, "Environmental Factor") }
+            )
+            "education" -> listOf(
+                async { getRssNews(TEDTALK_RSS_URL, "Ted Talk") }
+            )
+            "games" -> listOf(
+                async { getRssNews(THEGAMER_RSS_URL, "The gamer")}
+            )
+            "crypto" -> listOf(
+                async { getRssNews(COINTELEGRAPH_RSS_URL, "Coin Telegraph") },
+                async { getRssNews(CRYPTOPODCAST_RSS_URL, "Crypto Podcast") }
+            )
+            "sports" -> listOf(
+                async { getRssNews(CBSSPORT_RSS_URL, "CBS") },
+                async { getRssNews(SPORTSTAR_RSS_URL, "Sport Star") },
+                async { getRssNews(YAHOOSPORTS_RSS_URL, "Yahoo Sports") }
+
+            )
+
+
+
+
+
+
+
+            // Add other categories here...
+            else -> listOf(async { emptyList<NewsData>() })
+        }
+
+        val results = rssSources.map { safeAwait(it) ?: emptyList() }
+        results.flatten()
+    }
+
+    suspend fun getArticlesForCategoryNotification(category: String): List<NewsData> {
+        return try {
+            val newsDataDefferd = CoroutineScope(Dispatchers.IO).async{getNewsByCategory(category)}
+            val rssDeferred = CoroutineScope(Dispatchers.IO).async { getRssForCategory(category) }
+            val guardianDeferred = CoroutineScope(Dispatchers.IO).async { getGuardianNews(category) }
+
+
+            val newsData = safeAwait(newsDataDefferd) ?: emptyList()
+            val rssArticles = safeAwait(rssDeferred) ?: emptyList()
+            val guardianArticles = safeAwait(guardianDeferred) ?: emptyList()
+
+            (rssArticles + guardianArticles + newsData)
+                .sortedByDescending { it.publishedAt }
+                .take(10) // Optional: only most recent
+        } catch (e: Exception) {
+            Log.e("Repository", "Error getting category notification", e)
+            emptyList()
+        }
+    }
+
+    suspend fun getTopLikedCategories(): List<String> {
+        val likedStates = dao.getLikedStates()
+        Log.d("NewsRepository", "Liked states: $likedStates")
+        return likedStates
+            .groupingBy { it.category }
+            .eachCount()
+            .entries
+            .sortedByDescending { it.value }
+            .take(3)
+            .map { it.key }
+    }
+
 
 
 

@@ -16,5 +16,6 @@
         android:layout_gravity="center"
         android:layout_marginStart="16dp"
         android:text="Summarizing article..."
+        android:textColor="?attr/myTitle"
         android:textSize="16sp" />
 </LinearLayout>

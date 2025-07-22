@@ -32,7 +32,17 @@ class NotificationFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        /*
+                val isGranted = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+         */
         val newsViewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
+        val definedCategories = listOf("sports", "crypto", "games","education",
+            "health", "business", "environment", "science", "technology")
         newsViewModel.allTabs.observe(viewLifecycleOwner){
             prefs->
             notificationViewModel.loadPreferences(requireContext(), prefs)
@@ -41,9 +51,14 @@ class NotificationFragment : Fragment() {
                 preferences ->
                 val adapter = NotificationSettingsAdapter(preferences) { item ->
                     notificationViewModel.updatePreference(item, requireContext())
+
                     if (item.category == "For you") {
                         notificationViewModel.onForYouNotificationToggleChanged(item.isEnabled, requireContext())
-                    }else{
+                    }
+                    else if (item.category.lowercase() in definedCategories){
+                        notificationViewModel.onCategoryNotificationToggleChanged(item.category, item.isEnabled, requireContext())
+                    }
+                    else{
                         val rssUrl = newsViewModel.getRssUrlByName(item.category)
                         if (rssUrl != null) {
                             notificationViewModel.onRssToggleChanged(
@@ -54,7 +69,6 @@ class NotificationFragment : Fragment() {
                             )
                         }
                     }
-                    //here should be called
 
 
                 }

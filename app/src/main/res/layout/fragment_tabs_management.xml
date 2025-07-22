@@ -68,6 +68,7 @@
         android:text="Football"
         android:textAllCaps="false"
         android:backgroundTint="@drawable/button_state_selector"
+        android:textColor="@drawable/button_text_selector"
         app:layout_constraintStart_toEndOf="@+id/btnforU"
         app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
@@ -81,7 +82,8 @@
         android:text="Sports"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/btnFootball"
-        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5"
+        android:textColor="@drawable/button_text_selector"/>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBooks"
         style="@style/CustomButtonUnselected"
@@ -92,7 +94,8 @@
         android:text="Books"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/btnSports"
-        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnTech"
@@ -104,7 +107,8 @@
         android:text="Technology"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnforU" />
+        app:layout_constraintTop_toBottomOf="@+id/btnforU"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPolitics"
@@ -117,7 +121,8 @@
         android:textAllCaps="false"
 
         app:layout_constraintStart_toEndOf="@+id/btnEnvironment"
-        app:layout_constraintTop_toBottomOf="@+id/btnBooks" />
+        app:layout_constraintTop_toBottomOf="@+id/btnBooks"
+        android:textColor="@drawable/button_text_selector"/>
 
 
     <com.google.android.material.button.MaterialButton
@@ -130,7 +135,8 @@
         android:layout_marginStart="15dp"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnTech" />
+        app:layout_constraintTop_toBottomOf="@+id/btnTech"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBusiness"
@@ -142,7 +148,8 @@
         android:textAllCaps="false"
         android:layout_marginLeft="6dp"
         app:layout_constraintStart_toEndOf="@+id/btnSience"
-        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment" />
+        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnHealth"
@@ -154,7 +161,8 @@
         android:layout_marginLeft="6dp"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/btnEducation"
-        app:layout_constraintTop_toBottomOf="@+id/btnGames" />
+        app:layout_constraintTop_toBottomOf="@+id/btnGames"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEducation"
@@ -166,7 +174,8 @@
         android:textAllCaps="false"
         android:layout_marginLeft="6dp"
         app:layout_constraintStart_toEndOf="@+id/btnCrypto"
-        app:layout_constraintTop_toBottomOf="@+id/btnBusiness" />
+        app:layout_constraintTop_toBottomOf="@+id/btnBusiness"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCrypto"
@@ -178,7 +187,8 @@
         android:layout_marginStart="15dp"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSience" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSience"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFood"
@@ -190,7 +200,8 @@
         android:layout_marginLeft="6dp"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/btnGames"
-        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment" />
+        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGames"
@@ -202,7 +213,8 @@
         android:layout_marginLeft="6dp"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/btnBusiness"
-        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment" />
+        app:layout_constraintTop_toBottomOf="@+id/btnEnvironment"
+        android:textColor="@drawable/button_text_selector"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEnvironment"
@@ -214,7 +226,9 @@
         android:textAllCaps="false"
         android:layout_marginLeft="6dp"
         app:layout_constraintStart_toEndOf="@+id/btnTech"
-        app:layout_constraintTop_toBottomOf="@+id/btnFootball" />
+        app:layout_constraintTop_toBottomOf="@+id/btnFootball"
+        android:textColor="@drawable/button_text_selector"
+        />
 
 
     <TextView

@@ -8,21 +8,23 @@
     android:padding="24dp"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".view.AppearanceFragment">
+    tools:context=".view.AppearanceFragment"
+    android:background="?attr/myFragmentBackground">
 
     <!-- Section Title -->
+
+    <!-- Theme Cards Row -->
     <TextView
         android:id="@+id/appearanceTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Choose a Theme"
-        android:textColor="#222222"
+        android:textColor="?attr/myTitle"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Theme Cards Row -->
     <LinearLayout
         android:id="@+id/themeSelector"
         android:layout_width="match_parent"

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
-        android:background="@color/cardViewBackground"
+        android:background="?attr/myCardBackground"
         android:paddingBottom="5dp">
 
 
@@ -50,9 +50,10 @@
             android:ellipsize="end"
             android:maxLines="3"
             android:text="TITLE"
-            android:textColor="@color/title"
-            android:textSize="15sp"
+            android:textColor="?attr/myHeadlines"
+            android:textSize="14sp"
             android:textStyle="bold"
+            android:paddingRight="5dp"
             app:layout_constraintLeft_toRightOf="@+id/ivNews"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -66,8 +67,9 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="DESCRIPTION"
-            android:textColor="@color/Secondary"
+            android:textColor="?attr/mySecondary"
             android:textSize="12sp"
+            android:paddingStart="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivNews"
             app:layout_constraintTop_toBottomOf="@+id/tvNewsTitle" />

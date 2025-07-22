@@ -67,6 +67,16 @@ class NotificationViewModel : ViewModel() {
             Toast.makeText(context, "$category RSS notification disabled", Toast.LENGTH_SHORT).show()
         }
     }
+    fun onCategoryNotificationToggleChanged(category: String, enabled: Boolean, context: Context) {
+        if (enabled) {
+            NotificationScheduler.scheduleCategoryNotification(context, category)
+            Toast.makeText(context, "$category notification enabled", Toast.LENGTH_SHORT).show()
+        } else {
+            NotificationScheduler.cancelCategoryNotification(context, category)
+            Toast.makeText(context, "$category notification disabled", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
 
 }

@@ -15,16 +15,20 @@ import com.example.newsapp.model.NewsArticle
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.utils.Constants
+import com.example.newsapp.utils.awaitValue
+import com.example.newsapp.utils.safeAwait
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Collections.addAll
 
 class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
@@ -59,6 +63,11 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
     private val _categoryLoadingStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     private val _rssLoadingStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+
+    private val _isForYouLoading = MutableLiveData<Boolean>()
+    val isForYouLoading: LiveData<Boolean> = _isForYouLoading
+
+
 
     private val _isSubscribed = MutableLiveData(false)
     val isSubscribed: LiveData<Boolean> = _isSubscribed
@@ -143,27 +152,33 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             val currentData = _newsData.value ?: emptyMap()
             val newData = async{ repository.getNewsByCategory(category) }
             val guardian = async{ repository.getGuardianNews(category) }
+            val rssDeferred  = async{repository.getRssForCategory(category)}
             val likeStateDefered = async{ repository.getLikeStates() }
 
             val ls = likeStateDefered.await()
             Log.d("News ViewModel", "Like info || :\n ${ls.values} \n id: ${ls.keys} \n")
-            val gnData = guardian.await()
-            val newsApiData = newData.await()
-            var combinedList = mutableListOf<NewsData>().apply {
+            val gnData = safeAwait(guardian) ?: emptyList()
+            val newsApiData = safeAwait(newData) ?: emptyList()
+            val rssNews = safeAwait(rssDeferred) ?: emptyList()
+            val combinedList = mutableListOf<NewsData>().apply {
                 addAll(gnData)
                 addAll(newsApiData)
+                addAll(rssNews)
             }
 
             val processed = combinedList.map {
-                article -> article.copy(isLike = ls[article.articleUrl]?: false)
+                article -> article.copy(isLike = ls[article.articleUrl]?: false,
+                    category = category)
+
             }
-            val shuffled  = processed.shuffled()
+            //val shuffled  = processed.shuffled()
+            val sorted = processed.sortedByDescending { it.publishedAt }
             /*val updatedData = currentData.toMutableMap().apply {
                 put(category, newData)
             }*/
 
             val updatedData = currentData.toMutableMap().apply{
-                put(category, shuffled)
+                put(category, sorted)
             }
             _newsData.value = updatedData
             _categoryLoadingStates.update { it + (category to false) }
@@ -182,7 +197,8 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             // Get raw list from repository
             CategoryInitialized(category)
             val newsList = repository.getRssNews(url, category)
-            Log.d("NewsViewModel", "fetchNews: ${newsList}")
+            val processedList = newsList.map { it.copy(category = category) }
+            Log.d("NewsViewModel", "fetchNews: ${processedList}")
 
          /*   // Create/update LiveData entry
             _rssNewsData.getOrPut(category) {
@@ -190,7 +206,7 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             }.value = newsList*/
 
 
-            _rssNewsData[category]?.postValue(newsList)
+            _rssNewsData[category]?.postValue(processedList)
             _rssLoadingStates.update {it + (category to false)}
         }
     }
@@ -212,21 +228,22 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             val dailyMailDeferred = async { repository.getRssNews(Constants.DAILY_MAIL_RSS_URL, "Daily Mail") }
             val espn2Deferred = async { repository.getEspnNews() }
             val likeStateDefered = async{ repository.getLikeStates() }
-            val ls = likeStateDefered.await()
+
 
             // Wait for all network calls to complete and get their results
-            val guardian = guardianDeferred.await()
-            val espn2 = espn2Deferred.await()
+            val guardian = safeAwait(guardianDeferred) ?: emptyList()
+            val cbs = safeAwait(cbsDeferred) ?: emptyList()
+            val espn = safeAwait(espnDeferred) ?: emptyList()
+            val goal = safeAwait(goalDeferred) ?: emptyList()
+            val bbc = safeAwait(bbcDeferred) ?: emptyList()
+            val bbc2 = safeAwait(bbc2Deferred) ?: emptyList()
+            val ff2 = safeAwait(ff2Deferred) ?: emptyList()
+            val ninety = safeAwait(ninetyDeferred) ?: emptyList()
+            val mirror = safeAwait(mirrorDeferred) ?: emptyList()
+            val dailyMail = safeAwait(dailyMailDeferred) ?: emptyList()
+            val espn2 = safeAwait(espn2Deferred) ?: emptyList()
+            val ls = likeStateDefered.await()
 
-            val cbs = cbsDeferred.await()
-            val espn = espnDeferred.await()
-            val goal = goalDeferred.await()
-            val bbc = bbcDeferred.await()
-            val bbc2 = bbc2Deferred.await()
-            val ff2 = ff2Deferred.await()
-            val ninety = ninetyDeferred.await()
-            val mirror = mirrorDeferred.await()
-            val dailyMail = dailyMailDeferred.await()
 
 
 
@@ -247,14 +264,16 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
             }
 
             combinedList = combinedList.map{ article->
-                article.copy(isLike = ls[article.articleUrl] ?: false)
+                article.copy(isLike = ls[article.articleUrl] ?: false,
+                    category = "Football")
             }.toMutableList()
 
             // Shuffle the combined list
-            val shuffledList = combinedList.shuffled()
+            //val shuffledList = combinedList.shuffled()
+            val sortedNewsList = combinedList.sortedByDescending { it.publishedAt }
 
             // Update _footballData with the shuffled list
-            _footballData.value = shuffledList
+            _footballData.value = sortedNewsList
 
         }
     }
@@ -262,12 +281,12 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
     fun searchNews(query: String) {
         viewModelScope.launch {
             val searchResults = repository.searchNews(query)
-            _searchedData.value = searchResults
+            _searchedData.value = searchResults.sortedByDescending { it.publishedAt }
         }
 
     }
 
-
+    /*
     fun getForYouNews(userCategories: List<String>) {
         viewModelScope.launch {
             val likeStatesDeferred = async { repository.getLikeStates() }
@@ -278,73 +297,126 @@ class NewsViewModel(private var repository: NewsRepository) : ViewModel() {
 
             // Trigger fetches
             userCategories.forEach { fetchNewsForCategory(it) }
-            rssItems.value?.forEach { fetchRssNews(it.name, it.url) }
+            rssItems.value?.forEach {
+                fetchRssNews(it.name, it.url)
 
-            // Wait until all flags become false
-            combine(_categoryLoadingStates, _rssLoadingStates) { catFlags, rssFlags ->
-                val allCatDone = catFlags.values.all { !it }
-                val allRssDone = rssFlags.values.all { !it }
-                allCatDone && allRssDone
-            }.filter { it }.first()
+                // Wait until all flags become false
+                combine(_categoryLoadingStates, _rssLoadingStates) { catFlags, rssFlags ->
+                    val allCatDone = catFlags.values.all { !it }
+                    val allRssDone = rssFlags.values.all { !it }
+                    allCatDone && allRssDone
+                }.filter { it }.first()
 
-            // Once all done, combine the data
-            val allArticles = mutableListOf<NewsData>()
-            newsData.value?.forEach { (category, list) -> allArticles.addAll(list) }
-            _rssNewsData.forEach { (_, liveData) -> liveData.value?.let { allArticles.addAll(it) } }
+                // Once all done, combine the data
+                val allArticles = mutableListOf<NewsData>()
+                newsData.value?.forEach { (category, list) -> allArticles.addAll(list) }
+                _rssNewsData.forEach { (_, liveData) -> liveData.value?.let { allArticles.addAll(it) } }
 
-            // 5. Apply like state
-            val liked = likeStatesDeferred.await()
-            val processed = allArticles.distinctBy { it.articleUrl }.map {
-                it.copy(isLike = liked[it.articleUrl] ?: false)
+                // 5. Apply like state
+                val liked = likeStatesDeferred.await()
+                val processed = allArticles.distinctBy { it.articleUrl }.map {
+                    it.copy(isLike = liked[it.articleUrl] ?: false)
+                }
+                _forYouData.value = processed.sortedByDescending { it.publishedAt }
             }
-            _forYouData.value = processed
         }
     }
 
-    /*
+  */
+
+
     fun getForYouNews(userCategories: List<String>) {
+        Log.d("For You", "getForYouNews has been called")
+        Log.d("For You", "User Categories: $userCategories")
         viewModelScope.launch {
-            val likeStatesDeferred = async { repository.getLikeStates() }
+            Log.d("ForYouDebug", "getForYouNews: setting isForYouLoading=true")
+            _isForYouLoading.value = true
+            coroutineScope {
+                // Step 1: Fetch like states
+                val likeStates = async { repository.getTopLikedCategories() }.await()
+                Log.d("For You", "Like States: $likeStates")
+                val ls = async{ repository.getLikeStates() }
+                // Step 2: Handle top 3 liked categories with fallback to userCategories
+                val topCategories = likeStates.toMutableList()
+                Log.d("For You", "Top Categories: $topCategories")
 
-            val allArticles = mutableListOf<NewsData>()
+                if (topCategories.size < 3) {
+                    val remaining = userCategories
+                        .filterNot { it in topCategories }
+                        .shuffled()
+                        .take((3 - topCategories.size).coerceAtMost(userCategories.size))
+                    topCategories += remaining
+                }
 
-            // 1. Trigger category fetches (these update _newsData internally)
-            userCategories.forEach { category ->
-                fetchNewsForCategory(category)
+                // Step 3: Separate into real categories and RSS items
+                val rssSources = rssItems.value.orEmpty()
+                val rssNames = rssSources.map { it.name }.toSet()
+
+                Log.d("For You", "Top categories before partition: $topCategories")
+
+                val (rssTopCategories, categoryTopCategories) = topCategories.partition { it in rssNames }
+
+                Log.d("For You", "Category Top Categories: $categoryTopCategories \n RSS Top Categories: $rssTopCategories")
+                // Step 4: Fetch news in parallel
+                val categoryFetchJobs = categoryTopCategories.map { category ->
+                    if(category == "Football")
+                        async {
+                            getFootballNews()
+                        }
+                    else
+                    async {
+                        fetchNewsForCategory(category)
+                    }
+                }
+
+                val rssFetchJobs = (rssTopCategories.mapNotNull { rssName ->
+                    rssSources.find { it.name == rssName }
+                }).map { rss ->
+                    async {
+                        fetchRssNews(rss.name, rss.url)
+                    }
+                }
+
+                // Step 5: Wait for all fetches
+                (categoryFetchJobs + rssFetchJobs).awaitAll()
+
+                // Step 6: Combine, deduplicate, sort, limit
+                val categoryArticles = withContext(Dispatchers.Main) {
+                    newsData.awaitValue()?.values?.flatten().orEmpty()
+                }
+                val rssArticlesLists = _rssNewsData.values.map { liveData ->
+                    withContext(Dispatchers.Main) {
+                        liveData.awaitValue()
+                    }
+                }
+
+                val rssArticles = rssArticlesLists.filterNotNull().flatten()
+                // Step 7: Combine, deduplicate, sort, limit
+                val allArticles = (categoryArticles + rssArticles)
+                    .distinctBy { it.articleUrl }
+                    .sortedByDescending { it.publishedAt }
+                    .take(50)
+
+
+                val likedMap  = ls.await()
+                // Step 7: Apply like states
+
+                val processed = allArticles.map {
+                    it.copy(isLike = likedMap[it.articleUrl] ?: false)
+                }
+
+                // Step 8: Update final result
+                Log.d("ForYouDebug", "getForYouNews: length of all articles: ${processed.size}")
+                _forYouData.value = processed
+                _isForYouLoading.value = false
+                Log.d("ForYouDebug", "getForYouNews: isForYouLoading=false, posted data")
             }
-
-            // Wait a bit to allow _newsData to update (optional but helps)
-           // delay(800) // Could be adjusted or replaced by a smarter signal
-
-            // 2. Collect articles from updated _newsData
-            val currentNewsMap = newsData.value ?: emptyMap()
-            userCategories.forEach { category ->
-                currentNewsMap[category]?.let { allArticles.addAll(it) }
-            }
-
-            // 3. Trigger RSS fetches
-            rssItems.value?.forEach { rssItem ->
-                fetchRssNews(rssItem.name, rssItem.url)
-            }
-
-            // Wait for RSS data to arrive
-            //delay(800)
-
-            // 4. Collect from _rssNewsData
-            rssItems.value?.forEach { rssItem ->
-                _rssNewsData[rssItem.name]?.value?.let { allArticles.addAll(it) }
-            }
-
-            // 5. Apply like state
-            val liked = likeStatesDeferred.await()
-            val processed = allArticles.distinctBy { it.articleUrl }.map {
-                it.copy(isLike = liked[it.articleUrl] ?: false)
-            }
-
-            _forYouData.value = processed.shuffled()
         }
     }
-    */
+
+
+
+
 
 
     fun saveBookmarksToRoom(bookmarks: List<NewsData>) {

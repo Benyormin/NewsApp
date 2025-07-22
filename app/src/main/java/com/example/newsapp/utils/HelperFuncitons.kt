@@ -116,148 +116,88 @@ class HelperFuncitons {
 
 
         fun getRelativeTimeAndroid(publishedAt: String): String {
-
-
-            /*
             val formats = listOf(
-                "yyyy-MM-dd'T'HH:mm:ssXXX",         // ISO 8601 with timezone
-                "yyyy-MM-dd'T'HH:mm:ss",            // ISO 8601 without timezone
-                "EEE, d MMM yyyy HH:mm:ss zzz"      // RFC 1123 (e.g. "Tue, 3 Jun 2025 10:44:16 EST")
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME,                             // "2025-06-02T13:00:11+00:00"
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),               // "2025-06-02T13:00:11"
+                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH),     // "Tue, 02 Jul 2024 14:22:00 +0000"
+                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH),   // "Tue, 02 Jul 2024 14:22:00 GMT"
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")         // "2024-06-02T13:00:11.123Z"
             )
 
+            val publishedTime: Instant? = run {
+                val rfcString = publishedAt.trim()
 
-            val publishedTime = formats.asSequence().mapNotNull { format ->
-                try {
-                    val sdf = SimpleDateFormat(format, Locale.ENGLISH)
+                if (rfcString.matches(Regex(".*\\s[A-Z]{3}\$"))) {
+                    val withoutZone = rfcString.substringBeforeLast(' ')
+                    Log.d("HelperFunctions", "RFC branch: stripping zone → \"$withoutZone\"")
 
-                    // Special case for zzz-based timezones (EST, PDT, etc.)
-                    if (format.contains("zzz") && publishedAt.contains("EST")) {
-                        // Map EST to America/New_York for daylight-aware handling
-                        sdf.timeZone = TimeZone.getTimeZone("America/New_York")
-                    } else if (format.contains("zzz")) {
-                        // Add other mappings if needed (e.g. PST, GMT, etc.)
-                        sdf.timeZone = TimeZone.getTimeZone("GMT") // default fallback
-                    } else {
-                        // Let system handle timezone based on offset or default
-                        sdf.timeZone = TimeZone.getTimeZone("UTC")
+                    val localFormatter = DateTimeFormatter.ofPattern(
+                        "EEE, d MMM yyyy HH:mm:ss", Locale.ENGLISH
+                    )
+                    try {
+                        val localDateTime = org.threeten.bp.LocalDateTime.parse(
+                            withoutZone,
+                            localFormatter
+                        )
+                        val zonedInstant = localDateTime
+                            .atZone(ZoneId.of("America/New_York"))
+                            .toInstant()
+
+                        Log.d("HelperFunctions", "RFC (textual zone) success → Instant=\"$zonedInstant\"")
+                        return@run zonedInstant
+                    } catch (e: Exception) {
+                        Log.e("HelperFunctions", "RFC parsing failed for \"$withoutZone\"", e)
                     }
-
-                    sdf.parse(publishedAt)?.time
-                } catch (e: Exception) {
-                    null
                 }
-            }.firstOrNull() ?: return "Unknown"  // if all parsers fail
+
+                formats.asSequence().mapNotNull { formatter ->
+                    try {
+                        val instant = when (formatter) {
+                            DateTimeFormatter.ISO_OFFSET_DATE_TIME -> {
+                                val odt = org.threeten.bp.OffsetDateTime.parse(publishedAt, formatter)
+                                odt.toInstant()
+                            }
+                            else -> {
+                                val ldt = org.threeten.bp.LocalDateTime.parse(publishedAt, formatter)
+                                val inst = ldt.atZone(ZoneId.of("UTC")).toInstant()
+                                inst
+                            }
+                        }
+                        Log.d("HelperFunctions", "Parsed using \"$formatter\" → Instant=\"$instant\"")
+                        instant
+                    } catch (e: Exception) {
+                        Log.d("HelperFunctions", "Failed with formatter \"$formatter\" → $publishedAt")
+                        null
+                    }
+                }.firstOrNull()
+            } ?: run {
+                Log.e("HelperFunctions", "All parsing attempts failed for \"$publishedAt\"")
+                return "Unknown"
+            }
 
             return try {
-                val networkTimeMillis = getNetworkTime() ?: System.currentTimeMillis()
-                Log.d("HelperFunctions", "Network time: ${Date(networkTimeMillis)}")
+                val nowInstant = Instant.ofEpochMilli(TimeUtils.getNow())
+                val duration = Duration.between(publishedTime, nowInstant)
+                val minutes = duration.toMinutes()
 
-                DateUtils.getRelativeTimeSpanString(
-                    publishedTime,
-                    networkTimeMillis,
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_RELATIVE
-                ).toString()
+                Log.d("HelperFunctions", "Computed duration → $minutes min")
+
+                when {
+                    minutes < 1 -> "Just now"
+                    minutes < 60 -> "$minutes min ago"
+                    minutes < 1440 -> "${minutes / 60} hr. ago"
+                    minutes < 2880 -> "Yesterday"
+                    minutes < 10080 -> "${minutes / 1440} days ago"
+                    minutes < 20160 -> "1 week ago"
+                    minutes < 40320 -> "${minutes / 10080} weeks ago"
+                    else -> "${minutes / 40320} months ago"
+                }
             } catch (e: Exception) {
-                Log.e("HelperFunctions", "Failed to calculate relative time for: $publishedAt", e)
+                Log.e("HelperFunctions", "Relative time calc failed for: $publishedAt", e)
                 "Invalid date"
             }
         }
-*/
 
-
-                val formats = listOf(
-                    DateTimeFormatter.ISO_OFFSET_DATE_TIME,               // e.g. "2025-06-02T13:00:11+00:00"
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")  // e.g. "2025-06-02T13:00:11"
-                )
-
-                val publishedTime: Instant? = run {
-                    // 1) Check if it ends in " <3-letter zone>", e.g. "Tue, 3 Jun 2025 14:33:08 EST"
-                    val rfcString = publishedAt.trim()
-                    if (rfcString.matches(Regex(".*\\s[A-Z]{3}\$"))) {
-                        val withoutZone = rfcString.substringBeforeLast(' ') // → "Tue, 3 Jun 2025 14:33:08"
-                        Log.d("HelperFunctions", "RFC branch: stripping zone → \"$withoutZone\"")
-
-                        val localFormatter = DateTimeFormatter.ofPattern(
-                            "EEE, d MMM yyyy HH:mm:ss", Locale.ENGLISH
-                        )
-                        try {
-                            val localDateTime = org.threeten.bp.LocalDateTime.parse(
-                                withoutZone,
-                                localFormatter
-                            )
-                            val zonedInstant = localDateTime
-                                .atZone(ZoneId.of("America/New_York"))
-                                .toInstant()
-
-                            Log.d(
-                                "HelperFunctions",
-                                "RFC branch: LocalDateTime=\"$localDateTime\", resulting Instant=\"$zonedInstant\""
-                            )
-                            return@run zonedInstant
-                        } catch (e: Exception) {
-                            Log.e("HelperFunctions", "RFC parsing failed for \"$withoutZone\"", e)
-                            // fall through to try the other formats
-                        }
-                    }
-
-                    // 2) Otherwise, try each ISO pattern:
-                    formats.asSequence().mapNotNull { formatter ->
-                        try {
-                            val instant = if (formatter == DateTimeFormatter.ISO_OFFSET_DATE_TIME) {
-                                val odt = org.threeten.bp.OffsetDateTime.parse(publishedAt, formatter)
-                                Log.d(
-                                    "HelperFunctions",
-                                    "ISO_OFFSET branch: parsed OffsetDateTime=\"$odt\", Instant=\"${odt.toInstant()}\""
-                                )
-                                odt.toInstant()
-                            } else {
-                                // “yyyy-MM-dd'T'HH:mm:ss” → interpret as UTC
-                                val ldt = org.threeten.bp.LocalDateTime.parse(publishedAt, formatter)
-                                val inst = ldt.atZone(ZoneId.of("UTC")).toInstant()
-                                Log.d(
-                                    "HelperFunctions",
-                                    "ISO_NOZONE branch: LocalDateTime=\"$ldt\" treated as UTC, Instant=\"$inst\""
-                                )
-                                inst
-                            }
-                            instant
-                        } catch (e: Exception) {
-                            Log.d(
-                                "HelperFunctions",
-                                "ISO parsing failed with formatter \"$formatter\" for input \"$publishedAt\""
-                            )
-                            null
-                        }
-                    }.firstOrNull()
-                } ?: run {
-                    Log.e("HelperFunctions", "All parsing attempts failed for \"$publishedAt\"")
-                    return "Unknown"
-                }
-
-                return try {
-                    val networkTimeMillis = getNetworkTime() ?: System.currentTimeMillis()
-                    val nowInstant = Instant.ofEpochMilli(networkTimeMillis)
-
-                    val duration = Duration.between(publishedTime, nowInstant)
-                    val minutes = duration.toMinutes()
-
-                    Log.d(
-                        "HelperFunctions",
-                        "Final computation: nowInstant=\"$nowInstant\", publishedTime=\"$publishedTime\", minutes=\"$minutes\""
-                    )
-
-                    when {
-                        minutes < 1 -> "Just now"
-                        minutes < 60 -> "$minutes min ago"
-                        minutes < 1440 -> "${minutes / 60} hr ago"
-                        else -> "${minutes / 1440} days ago"
-                    }
-                } catch (e: Exception) {
-                    Log.e("HelperFunctions", "Failed to calculate relative time for: $publishedAt", e)
-                    "Invalid date"
-                }
-            }
 
 
 

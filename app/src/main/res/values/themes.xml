@@ -2,6 +2,19 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.NewsApp" parent="Theme.MaterialComponents.Light.NoActionBar">
 
+        <item name="myHeadlines">@color/headlines</item>
+        <item name="myPrimary">@color/Primary</item>
+        <item name="mySecondary">@color/Secondary</item>
+        <item name="myCardBackground">@color/cardViewBackground</item>
+        <item name="myFragmentBackground">@color/myFragmentBackground</item>
+        <item name="myAccent">@color/accent</item>
+        <item name="myTitle">@color/title</item>
+        <item name="buttonBackground">@color/Secondary</item>
+        <item name="buttonTextColor">@color/black</item>
+        <item name="colorOnBackground">@color/gray</item>
+        <item name="searchViewTextColor">@color/black</item>
+
+
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
 
@@ -11,16 +24,23 @@
 
     <!-- ✅ Green Theme -->
     <style name="Theme.NewsApp.Green" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">#4CAF50</item>
-        <item name="colorPrimaryVariant">#388E3C</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
 
-        <item name="colorSecondary">#81C784</item>
-        <item name="colorOnSecondary">#000000</item>
+        <item name="myPrimary">#4CAF50</item>
+        <item name="mySecondary">@color/Secondary</item>
+        <item name="myCardBackground">#3a4b40</item>
+        <item name="myHeadlines">#f7e382</item>
+        <item name="myFragmentBackground">#d1fae0</item>
+        <item name="myAccent">@color/accent</item>
+        <item name="myTitle">@color/title</item>
+        <item name="buttonBackground">#006d89</item>
+        <item name="buttonTextColor">#d9eddf</item>
+        <item name="colorOnBackground">@color/gray</item>
+        <item name="searchViewTextColor">@color/black</item>
+
 
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowBackground">#F0FFF0</item> <!-- Optional: subtle green bg -->
+
     </style>
 
 

@@ -3,6 +3,7 @@ package com.example.newsapp.view
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,12 +11,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.newsapp.R
 import com.example.newsapp.viewmodel.NewsViewModel
 import com.example.newsapp.viewmodel.SummaryViewModel
@@ -62,6 +67,7 @@ class ArticleFragment : Fragment() {
         val webView = view.findViewById<ObservableWebView>(R.id.webView)
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNav.visibility = View.VISIBLE
+        val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
 
 
 
@@ -139,8 +145,35 @@ class ArticleFragment : Fragment() {
             if (article.articleUrl.isNullOrEmpty()) {
                 Log.e("Article Fragment ", "URL is null or empty")
             } else {
+                //Web View logic
                 webView.settings.javaScriptEnabled = true
+                webView.settings.userAgentString =
+                    "Mozilla/5.0 (Linux; Android 12; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+                webView.settings.domStorageEnabled = true
+                webView.settings.databaseEnabled = true
+                webView.settings.loadsImagesAutomatically = true
+
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                   webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                    webView.settings.domStorageEnabled = true
+                    webView.settings.loadsImagesAutomatically = true
+                }*/
+                webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                webView.settings.loadsImagesAutomatically = true
+                //webView.webViewClient = WebViewClient()
                 webView.loadUrl(article.articleUrl)
+
+                swipeRefresh.setOnRefreshListener {
+                    webView.reload()
+                }
+
+                webView.webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        swipeRefresh.isRefreshing = false
+                    }
+                }
+
+
                 fabBookmark.setOnClickListener {
                     article.isBookmarked = !article.isBookmarked
                     viewModel.toggleBookmark(article)

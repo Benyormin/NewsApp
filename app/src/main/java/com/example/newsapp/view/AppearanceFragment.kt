@@ -71,6 +71,7 @@ class AppearanceFragment : Fragment() {
             "dark" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 sharedPrefs.edit().putString("selected_theme", "dark").apply()
+                activity?.recreate()
             }
             "green" -> {
                 binding.checkGreen.visibility = View.VISIBLE
@@ -101,8 +102,15 @@ override fun onDestroyView(){
             val selectedTheme = sharedPrefs.getString("selected_theme", "light")
 
             when (selectedTheme) {
-                "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                "light" -> {
+
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    activity.setTheme(R.style.Base_Theme_NewsApp)
+                }
+                "dark" -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    activity.setTheme(R.style.Base_Theme_NewsApp)
+                }
                 "green" -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                     activity.setTheme(R.style.Theme_NewsApp_Green)

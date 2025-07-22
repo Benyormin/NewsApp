@@ -5,7 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.BookmarksFragment"
-    android:background="@color/myFragmentBackground">
+    android:background="?attr/myFragmentBackground">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="25dp" />
+
 
     <TextView
         android:id="@+id/textView4"
@@ -13,22 +20,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:text="Bookmarks"
-        android:textColor="@color/Primary"
+        android:textColor="?attr/myTitle"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.062"
+        app:layout_constraintHorizontal_bias="0.043"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline3"
         app:layout_constraintVertical_bias="0.0" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="702dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBookmark"

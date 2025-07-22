@@ -90,11 +90,16 @@ class NewsListFragment : Fragment() {
         val category = arguments?.getString(ARG_CATEGORY) ?: "Unknown"
         val isRss = arguments?.getBoolean(ARG_IS_RSS) ?: false
 
+        //TODO:: why I put this? the Toast?
         if(isRss){
             rssUrl = arguments?.getString(ARG_RSS_URL) ?: ""
-            Toast.makeText(requireContext(), "this is the Url: $rssUrl", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "this is the Url: $rssUrl", Toast.LENGTH_SHORT).show()
 
         }
+
+        Log.d("ForYouDebug", "onViewCreated: called with category=$category")
+
+
         loadNews(category, rssUrl)
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
@@ -105,101 +110,203 @@ class NewsListFragment : Fragment() {
 
         observeData(category)
 
+        viewModel.forYouData.observe(viewLifecycleOwner) {
+            Log.d("ForYouDebug", "Observer triggered: ${it.size} items")
+            // update UI or whatever
+        }
+
+        //viewModel.getForYouNews()
+
     }
+
 
     private fun observeData(category: String) {
-
-        viewModel.rssItems.observe(viewLifecycleOwner) { rssList ->
-
-            Log.d("NewsListFragment", "observe data, rssItems $rssList")
-
-            Log.d("Comparison", "Checking category: '$category'")
-            rssList.forEach {
-                Log.d(
-                    "Comparison",
-                    "RssUrl name: '${it.name}' vs category: '${category}' → ${it.name == category}"
-                )
-            }
-
-
-            if(category == "Football"){
-
-                viewModel.footballData.observe(viewLifecycleOwner){
-                        it ->
-                    if(!it.isNullOrEmpty()){
-                        updateRecyclerView(it)
-                    }else{
-                        Toast.makeText(requireContext(), "Empty football news!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-            }
-            else if (category == "For you") {
-                viewModel.forYouData.observe(viewLifecycleOwner) { it ->
-                    if (!it.isNullOrEmpty()) {
-                        updateRecyclerView(it)
-                    } else {
-                        Toast.makeText(requireContext(), "Empty for you news!", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            }
-            else if (rssList.any{ it.name == category}){
-                Log.d("NewsListFragment", "rssNewsData.observe has been called")
-                Log.d("NewsListFragment", "rssNewsData.observe${rssList}")
-                Log.d("NewsListFragment","Observing RssNews for ${category}")
-                viewModel.CategoryInitialized(category)
-                viewModel.rssNewsData[category]?.observe(viewLifecycleOwner){
-                        it ->
-                    if(it != null)
-                        updateRecyclerView(it)
-                }
-                // 3. Trigger fetch (now safe)
-                viewModel.fetchRssNews(category, rssUrl)
-            }
-            else{
-                viewModel.newsData.observe(viewLifecycleOwner){
-                        it ->
-                    val articles = it[category]?: emptyList()
-                    updateRecyclerView(articles)
+        // Always observe these, unconditionally
+        viewModel.forYouData.observe(viewLifecycleOwner) { list ->
+            Log.d("ForYouDebug", "Observed forYouData: ${list?.size} items, category=$category")
+            if (category == "For you") {
+                if (!list.isNullOrEmpty()) {
+                    updateRecyclerView(list)
+                } else {
+                    Toast.makeText(requireContext(), "Empty for you news!", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
+        viewModel.isForYouLoading.observe(viewLifecycleOwner) { isLoading ->
+            Log.d("ForYouDebug", "Observed isForYouLoading=$isLoading for category=$category")
+            if (category == "For you" && isLoading) {
+                Toast.makeText(requireContext(), "Loading...", Toast.LENGTH_SHORT).show()
+            }
+        }
 
+        viewModel.footballData.observe(viewLifecycleOwner) { list ->
+            if (category == "Football") {
+                if (!list.isNullOrEmpty()) {
+                    updateRecyclerView(list)
+                } else {
+                    Toast.makeText(requireContext(), "Empty football news!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
+        viewModel.newsData.observe(viewLifecycleOwner) { dataMap ->
+            if (category != "Football" && category != "For you" && viewModel.rssItems.value?.none { it.name == category } == true) {
+                val articles = dataMap[category] ?: emptyList()
+                updateRecyclerView(articles)
+            }
+        }
+
+        // RSS-based category observation — safe access using existing map
+        viewModel.rssNewsData[category]?.observe(viewLifecycleOwner) { list ->
+            if (list != null && viewModel.rssItems.value?.any { it.name == category } == true) {
+                updateRecyclerView(list)
+            }
+        }
     }
+
+
+    /*
+        private fun observeData(category: String) {
+
+            viewModel.rssItems.observe(viewLifecycleOwner) { rssList ->
+
+                Log.d("NewsListFragment", "observe data, rssItems $rssList")
+
+                Log.d("Comparison", "Checking category: '$category'")
+                rssList.forEach {
+                    Log.d(
+                        "Comparison",
+                        "RssUrl name: '${it.name}' vs category: '${category}' → ${it.name == category}"
+                    )
+                }
+
+
+                if(category == "Football"){
+
+                    viewModel.footballData.observe(viewLifecycleOwner){
+                            it ->
+                        if(!it.isNullOrEmpty()){
+                            updateRecyclerView(it)
+                        }else{
+                            Toast.makeText(requireContext(), "Empty football news!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+                else if (category == "For you") {
+
+                    viewModel.isForYouLoading.observe(viewLifecycleOwner) { isLoading ->
+                        if (isLoading) {
+                            Toast.makeText(requireContext(), "Loading...", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    viewModel.forYouData.observe(viewLifecycleOwner) { it ->
+                        if (!it.isNullOrEmpty()) {
+                            updateRecyclerView(it)
+                        } else {
+                            Toast.makeText(requireContext(), "Empty for you news!", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+
+                }
+                else if (rssList.any{ it.name == category}){
+                    Log.d("NewsListFragment", "rssNewsData.observe has been called")
+                    Log.d("NewsListFragment", "rssNewsData.observe${rssList}")
+                    Log.d("NewsListFragment","Observing RssNews for ${category}")
+                    viewModel.CategoryInitialized(category)
+                    viewModel.rssNewsData[category]?.observe(viewLifecycleOwner){
+                            it ->
+                        if(it != null)
+                            updateRecyclerView(it)
+                    }
+                    // 3. Trigger fetch (now safe)
+                    viewModel.fetchRssNews(category, rssUrl)
+                }
+                else{
+                    viewModel.newsData.observe(viewLifecycleOwner){
+                            it ->
+                        val articles = it[category]?: emptyList()
+                        updateRecyclerView(articles)
+                    }
+                }
+            }
+
+
+
+        }
+
+        private fun loadNews(category: String, rssUrl: String) {
+
+            viewModel.rssItems.observe(viewLifecycleOwner){
+                rssList ->
+
+                if(category == "Football"){
+                    viewModel.getFootballNews()
+                }
+                else if( category == "For you"){
+                    viewModel.userCategories.observe(viewLifecycleOwner){
+                        val tabs = it?.categories?: listOf()
+                        val rssNames = rssList.map { it.name }
+                        viewModel.getForYouNews((tabs + rssNames))
+                    }
+                }
+                else if(rssList.any{it.name == category}){
+                    Log.d("NewsListFragment", "category is : $category")
+                    viewModel.fetchRssNews(category, rssUrl)
+                    Log.d("NewsListFragment", "fetchRssNews has been called")
+                    Log.d("NewsListFragment", "rssNewsData: ${viewModel.rssNewsData[category]?.value}")
+                }
+                else
+                    viewModel.fetchNewsForCategory(category)
+
+            }
+
+
+
+
+            swipeRefreshLayout.isRefreshing = false
+
+        }
+    */
 
     private fun loadNews(category: String, rssUrl: String) {
+        Log.d("ForYouDebug", "loadNews: category=$category, rssURL: $rssUrl")
+        val rssList = viewModel.rssItems.value.orEmpty()
 
-        viewModel.rssItems.observe(viewLifecycleOwner){
-            rssList ->
-
-            if(category == "Football"){
+        when {
+            category == "Football" -> {
                 viewModel.getFootballNews()
             }
-            else if( category == "For you"){
-                viewModel.userCategories.observe(viewLifecycleOwner){
-                    val tabs = it?.categories?: listOf("For you")
-                    viewModel.getForYouNews(tabs)
+
+            category == "For you" -> {
+                Log.d("ForYouDebug", "userCategories: ${viewModel.userCategories.value}")
+
+                viewModel.userCategories.observe(viewLifecycleOwner) { userCat ->
+                    Log.d("ForYouDebug", "Observed userCategories: $userCat")
+                    if (userCat != null) {
+                        val tabs = userCat.categories
+                        val rssNames = rssList.map { it.name }
+                        viewModel.getForYouNews(tabs + rssNames)
+                    }
                 }
             }
-            else if(rssList.any{it.name == category}){
-                viewModel.fetchRssNews(category, rssUrl)
-                Log.d("NewsListFragment", "fetchRssNews has been called")
-                Log.d("NewsListFragment", "rssNewsData: ${viewModel.rssNewsData[category]?.value}")
-            }
-            else
-                viewModel.fetchNewsForCategory(category)
 
+            rssList.any { it.name == category } -> {
+                viewModel.fetchRssNews(category, rssUrl)
+            }
+
+            else -> {
+                viewModel.fetchNewsForCategory(category)
+            }
         }
 
-
-
-
         swipeRefreshLayout.isRefreshing = false
-
     }
+
+
 
     private fun updateRecyclerView(articles: List<NewsData>){
         var adapter = NewsAdapter(articles,

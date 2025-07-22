@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="myPrimary" format="color"/>
+    <attr name="mySecondary" format="color"/>
+    <attr name="myCardBackground" format="color"/>
+    <attr name="myHeadlines" format="color"/>
+    <attr name="myFragmentBackground" format="color"/>
+    <attr name="myTitle" format="color" />
+    <attr name="myAccent" format="color" />
+    <attr name="buttonBackground" format="color" />
+    <attr name="buttonTextColor" format="color" />
+    <attr name="colorOnBackground" format="color"/>
+    <attr name="searchViewTextColor" format="color"/>
+
+</resources>
