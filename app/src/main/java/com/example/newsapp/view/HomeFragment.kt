@@ -210,6 +210,26 @@ class HomeFragment : Fragment() {
 
     private fun setupViewPager(categories: List<String>){
         val tabs = categories.map {
+            category ->  TabItem(title = category)
+        }
+
+
+
+
+        val viewPagerAdapter = ViewPagerAdapter(requireActivity(), tabs, rssUrls)
+        binding.vpContent.adapter = viewPagerAdapter
+
+        binding.vpContent.offscreenPageLimit = 3
+        // Connect TabLayout with ViewPager2
+        TabLayoutMediator(binding.tlCategories, binding.vpContent) { tab, position ->
+            tab.text = tabs[position].title
+
+        }.attach()
+
+    }
+
+   /* private fun setupViewPager(categories: List<String>){
+        val tabs = categories.map {
             category ->
             val rssUrl = rssUrls.find { it.name == category }
             TabItem(
@@ -233,7 +253,7 @@ class HomeFragment : Fragment() {
         }.attach()
 
     }
-
+*/
 
 
     fun createFragmentForTab(category: String): Fragment {

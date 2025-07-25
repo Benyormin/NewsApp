@@ -4,6 +4,5 @@ import androidx.fragment.app.Fragment
 
 data class TabItem (
     val title: String,
-    val fragment: Fragment
-) {
-}
+    //val fragment: Fragment
+)
