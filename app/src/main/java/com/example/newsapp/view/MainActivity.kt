@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
 
         val isFirstTime = sharedPreferences.getBoolean("isFirstTime", true)
-
+        val hasCompletedSetup = sharedPreferences.getBoolean("hasCompletedSetup", false)
         if (isFirstTime){
             sharedPreferences.edit().putString("selected_theme", "light").apply()
         }
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity() {
         val navGraph = navController.navInflater.inflate(R.navigation.news_nav_graph)
 
         // Set start destination based on first launch
-        val startDestination = if (isFirstTime) {
+        val startDestination = if (isFirstTime || !hasCompletedSetup) {
             sharedPreferences.edit().putBoolean("isFirstTime", false).apply()
             R.id.registerFragment
 

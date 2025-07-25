@@ -1,6 +1,8 @@
 package com.example.newsapp.view
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -208,6 +210,8 @@ class TabsManagementFragment : Fragment() {
                 actionTabsManagementFragmentToHomeFragment(userPreference.toTypedArray())
                 findNavController().navigate(action)
                 bottomNav.visibility = View.VISIBLE
+                val sharedPreferences = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                sharedPreferences.edit().putBoolean("hasCompletedSetup", true).apply()
 
             }
 

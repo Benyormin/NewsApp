@@ -13,7 +13,7 @@ import com.example.newsapp.utils.Converters
 
 @Database(
     entities = [NewsData::class, RssUrl::class, Preferences::class],
-    version = 1, exportSchema = false
+    version = 2, exportSchema = false
 )
 
 @TypeConverters(Converters::class)
@@ -36,7 +36,9 @@ abstract class ArticleDatabase : RoomDatabase() {
             Room.databaseBuilder(context.applicationContext,
                 ArticleDatabase::class.java,
                 "article_db.db"
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
     }
 
 
