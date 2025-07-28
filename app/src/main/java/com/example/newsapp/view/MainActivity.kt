@@ -1,5 +1,7 @@
 package com.example.newsapp.view
 
+import AdsManager
+import PremiumRepository
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
@@ -47,7 +49,7 @@ import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.model.NewsData
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.viewmodel.NewsViewModel
-import com.example.yourapp.utils.AdsManager
+
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -64,7 +66,8 @@ import com.example.newsapp.utils.HelperFuncitons.Companion.getNetworkTime
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.button.MaterialButton
 import android.content.res.Resources
-
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : AppCompatActivity() {
@@ -108,7 +111,6 @@ class MainActivity : AppCompatActivity() {
             /*Ad logic */
 
 
-         //adView = AdView(this)
 
         MobileAds.initialize(this) {
             Log.d("Ads", "MobileAds initialized")
@@ -120,11 +122,17 @@ class MainActivity : AppCompatActivity() {
             .build()
         MobileAds.setRequestConfiguration(configuration)
 
-        loadBanner()
+        val premiumRepository = PremiumRepository(this)
+        val adsManager = AdsManager(premiumRepository)
+        adView = adsManager.createBannerAdView(this)
+        adsManager.loadBanner(binding.adViewContainer, adView!!, "MainActivity")
 
+      /*  lifecycleScope.launch {
+            delay(20_000)
+            adsManager.hideAds(adView!!)
+        }
 
-
-
+*/
         /*Ad logic */
 
 
@@ -134,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         //initialize google ads
 
-        //MobileAds.initialize(this) {}
+
 
 
        /* viewModel.isSubscribed.observe(this){
@@ -243,7 +251,7 @@ class MainActivity : AppCompatActivity() {
         sharedPrefs: SharedPreferences
     ) {
         val packageName = activity.packageName
-        val powerManager = activity.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val powerManager = activity.getSystemService(POWER_SERVICE) as PowerManager
 
         val ignored = powerManager.isIgnoringBatteryOptimizations(packageName)
         val dontAskAgain = sharedPrefs.getBoolean("battery_opt_dont_ask_again", false)
@@ -302,7 +310,7 @@ class MainActivity : AppCompatActivity() {
     fun showNotificationPermissionDialog(activity: Activity) {
 
 
-        val prefs = activity.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val prefs = activity.getSharedPreferences("app_prefs", MODE_PRIVATE)
         val shouldNotAskAgain = prefs.getBoolean(PREF_DONT_ASK_NOTIFICATION_PERMISSION, false)
         val wasPromptedBefore = prefs.getBoolean(PREF_NOTIFICATION_PERMISSION_PROMPT, false)
 

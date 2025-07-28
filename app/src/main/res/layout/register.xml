@@ -23,7 +23,7 @@
         app:layout_constraintTop_toBottomOf="@+id/etEmailRegister" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/goToSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

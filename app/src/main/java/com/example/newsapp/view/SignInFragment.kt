@@ -66,6 +66,11 @@ class SignInFragment : Fragment() {
             bottomNav.visibility = View.VISIBLE
         }
 
+        binding.goToSignUp.setOnClickListener{
+            val action = SignInFragmentDirections.actionSignInFragmentToRegisterFragment()
+            findNavController().navigate(action)
+        }
+
         binding.btnSignIn.setOnClickListener {
             binding.btnSignIn.setOnClickListener {
                 val email = binding.etEmailSignIn.text.toString()

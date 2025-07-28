@@ -1,18 +1,26 @@
 package com.example.newsapp.view
 
 
+import AdsManager
+import AdsManager.Companion.isAdVisible
+import PremiumRepository
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 import com.example.newsapp.viewmodel.NewsViewModel
 
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -28,6 +36,7 @@ import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.db.RssUrl
 import com.example.newsapp.model.NewsArticle
 import com.example.newsapp.repository.NewsRepository
+import com.google.android.gms.ads.AdView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -54,6 +63,9 @@ class HomeFragment : Fragment() {
     private val rssUrls = mutableListOf<RssUrl>()
     private var tabs = mutableListOf<String>()
     private var userPreferences: MutableList<String> = mutableListOf("For you")
+    private lateinit var adsManager: AdsManager
+    private lateinit var adView: AdView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,6 +100,8 @@ class HomeFragment : Fragment() {
             else -> false
         }
 
+
+
         Log.d("HomeFragment", "is dark? : $isDark")
         if (isDark) {
             btnCustomizeTabs.setBackgroundColor(Color.BLACK)
@@ -96,7 +110,36 @@ class HomeFragment : Fragment() {
             btnCustomizeTabs.setBackgroundColor(Color.WHITE)
             btnCustomizeTabs.setImageResource(R.drawable.list_16dp_black)
         }
+        //Ads
 
+        val premiumRepository = PremiumRepository(requireContext())
+        adsManager = AdsManager(premiumRepository)
+
+        val params =  binding.tlCategories.layoutParams as ConstraintLayout.LayoutParams
+        if (isAdVisible()){
+            Log.d("AdsManager", "Home fragment: Ad is visible")
+        }
+        else
+        {
+            Log.d("AdsManager", "Home fragment: Ad is not visible")
+        }
+        params.topMargin = if (isAdVisible()){
+            0.dpToPx()
+        }else{
+            30.dpToPx()
+        }
+
+        //TODO:: when ad is removed the margin does not apply instantly. and I think its fine.
+
+
+        binding.tlCategories.layoutParams = params
+
+      /*  binding.adViewContainer.removeAllViews()
+        adView = adsManager.createBannerAdView(requireContext())  // <-- Make sure this function returns a new AdView instance
+        Log.d("AdsManager", "Home fragment: Banner ad view created $adView")
+        binding.adViewContainer.addView(adView)
+        //loadAdBanner()
+*/
 
 
 
@@ -187,6 +230,14 @@ class HomeFragment : Fragment() {
 
 
     }
+/*
+    private fun loadAdBanner() {
+        // Fragment identifier can be a unique string for the fragment
+        val fragmentId = "HomeFragment"
+
+        adsManager.loadBanner(adView, fragmentId)
+    }
+*/
 
     private fun addRssUrlsToTabs(userPreferences: List<String>,
                                  rssUrls: MutableList<RssUrl>): MutableList<String> {
@@ -207,6 +258,21 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("AdsManager", "Home Fragment: OnResumed has been called")
+        //loadAdBanner()
+    }
+
+    fun Int.dpToPx(): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this.toFloat(),
+            Resources.getSystem().displayMetrics
+        ).toInt()
+    }
+
 
     private fun setupViewPager(categories: List<String>){
         val tabs = categories.map {

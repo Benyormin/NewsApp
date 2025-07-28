@@ -8,6 +8,14 @@
         <item name="cornerRadius">8dp</item> <!-- Rounded corners -->
     </style>
 
+    <style name="closeAdButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">?attr/buttonCloseBackground</item>
+        <item name="android:textColor">?attr/buttonCloseTextColor</item> <!-- Text color -->
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">8dp</item> <!-- Rounded corners -->
+
+    </style>
+
     <style name="CustomButtonUnselected" parent="Widget.MaterialComponents.Button">
         <!-- <item name="backgroundTint">@color/white</item>-->
         <item name="android:textColor">@color/black</item> <!-- Text color -->

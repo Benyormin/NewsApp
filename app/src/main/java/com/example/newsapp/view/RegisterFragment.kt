@@ -56,6 +56,10 @@ class RegisterFragment : Fragment() {
             findNavController().navigate(action)
             bottomNav.visibility = View.VISIBLE
         }
+        binding.goToSignIn.setOnClickListener {
+            val action = RegisterFragmentDirections.actionRegisterFragmentToSignInFragment()
+            findNavController().navigate(action)
+        }
 
         binding.btnRegister.setOnClickListener {
             val emailText = binding.etEmailRegister.text.toString()

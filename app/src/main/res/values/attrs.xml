@@ -11,5 +11,9 @@
     <attr name="buttonTextColor" format="color" />
     <attr name="colorOnBackground" format="color"/>
     <attr name="searchViewTextColor" format="color"/>
+    <attr name="buttonCloseBackground" format="color"/>
+    <attr name="buttonCloseTextColor" format="color"/>
+
+
 
 </resources>

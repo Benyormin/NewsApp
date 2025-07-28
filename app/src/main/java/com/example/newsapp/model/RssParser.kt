@@ -5,6 +5,7 @@ import android.util.Xml
 import androidx.core.text.HtmlCompat
 import com.example.newsapp.utils.HelperFuncitons.Companion.getNetworkTime
 import com.google.common.collect.Iterables.skip
+import org.jsoup.Jsoup
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -12,6 +13,8 @@ import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+
+import org.jsoup.nodes.Document
 
 
 enum class RssType {
@@ -144,6 +147,14 @@ class RssParser (private val source: String){
                             val rawDescription = readText(parser)
                             description = stripHtml(rawDescription)
                             pubDate = extractPublicationDateFromDescription(rawDescription).orEmpty()
+
+
+                            val paragraph = extractLastParagraphText(rawDescription)
+                            if (paragraph != null) {
+                                description = paragraph
+                            }
+                            Log.d("RssParser", "Description: $description")
+
                         }
                         "link" -> url = readText(parser)
                         else -> {
@@ -258,7 +269,7 @@ class RssParser (private val source: String){
             Log.d("RssParser", "📄 readText() got: $result")
             parser.nextTag()
         }
-        return result.trim()
+        return HtmlCompat.fromHtml(result, HtmlCompat.FROM_HTML_MODE_LEGACY).toString().trim()
     }
 
     private fun convertToIsoFormat(dateStr: String): String {
@@ -349,6 +360,15 @@ class RssParser (private val source: String){
         }
 
         return RssType.SIMPLE
+    }
+
+
+
+    fun extractLastParagraphText(html: String): String? {
+        val doc: Document = Jsoup.parse(html)
+        val paragraphs = doc.select("p")
+
+        return paragraphs.lastOrNull { it.text().isNotBlank() }?.text()
     }
 
 

@@ -13,6 +13,8 @@
         <item name="buttonTextColor">@color/black</item>
         <item name="colorOnBackground">@color/gray</item>
         <item name="searchViewTextColor">@color/black</item>
+        <item name="buttonCloseBackground">@color/buttonCloseBackground</item>
+        <item name="buttonCloseTextColor">@color/buttonCloseTextColor</item>
 
 
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -34,6 +36,8 @@
         <item name="myTitle">@color/title</item>
         <item name="buttonBackground">#006d89</item>
         <item name="buttonTextColor">#d9eddf</item>
+        <item name="buttonCloseTextColor">@color/black</item>
+        <item name="buttonCloseBackground">#D6EBE3</item>
         <item name="colorOnBackground">@color/gray</item>
         <item name="searchViewTextColor">@color/black</item>
 
