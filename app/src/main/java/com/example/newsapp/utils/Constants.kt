@@ -25,7 +25,7 @@ public class Constants {
         val NEWS_API_BASE_URL: String = "https://newsapi.org/v2/"
         val ESPN_BASE_URL: String = "https://site.api.espn.com/"
 
-        val SUMMARY_BASE_URL: String ="https://59a2-104-28-221-41.ngrok-free.app"
+        val SUMMARY_BASE_URL: String ="http://summarizer.sagezendegi.ir:8888"
 
 
 
