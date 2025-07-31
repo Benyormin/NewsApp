@@ -79,8 +79,10 @@ class MainActivity : AppCompatActivity() {
     private val PREF_DONT_ASK_NOTIFICATION_PERMISSION = "dont_ask_notification_permission"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppearanceFragment.applyTheme(this, this)
+
         super.onCreate(savedInstanceState)
+        AppearanceFragment.applyTheme(this, this)
+
         enableEdgeToEdge()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -123,9 +125,11 @@ class MainActivity : AppCompatActivity() {
         MobileAds.setRequestConfiguration(configuration)
 
         val premiumRepository = PremiumRepository(this)
-        val adsManager = AdsManager(premiumRepository)
+        val adsManager = AdsManager(premiumRepository, this)
         adView = adsManager.createBannerAdView(this)
         adsManager.loadBanner(binding.adViewContainer, adView!!, "MainActivity")
+        adsManager.preloadNativeAd(applicationContext)
+
 
       /*  lifecycleScope.launch {
             delay(20_000)

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +48,9 @@ class AppearanceFragment : Fragment() {
             "green" ->{
                 binding.checkGreen.visibility = View.VISIBLE
             }
+            "Glass" ->{
+                binding.checkGlass.visibility = View.VISIBLE
+            }
         }
 
 
@@ -54,6 +58,7 @@ class AppearanceFragment : Fragment() {
         binding.cardLight.setOnClickListener { highlightSelectedTheme("light", sharedPrefs) }
         binding.cardDark.setOnClickListener { highlightSelectedTheme("dark", sharedPrefs) }
         binding.cardGreen.setOnClickListener { highlightSelectedTheme("green", sharedPrefs) }
+        binding.cardGlass.setOnClickListener { highlightSelectedTheme("Glass", sharedPrefs) }
 
 
     }
@@ -80,6 +85,12 @@ class AppearanceFragment : Fragment() {
                 sharedPrefs.edit().putString("selected_theme", "green").apply()
                 activity?.recreate()
             }
+            "Glass" -> {
+                binding.checkGlass.visibility = View.VISIBLE
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                sharedPrefs.edit().putString("selected_theme", "Glass").apply()
+                activity?.recreate()
+            }
 
 
 
@@ -103,7 +114,7 @@ override fun onDestroyView(){
 
             when (selectedTheme) {
                 "light" -> {
-
+                    Log.d("Theme", "theme is : $selectedTheme")
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                     activity.setTheme(R.style.Base_Theme_NewsApp)
                 }
@@ -115,6 +126,10 @@ override fun onDestroyView(){
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                     activity.setTheme(R.style.Theme_NewsApp_Green)
 
+                }
+                "Glass" -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    activity.setTheme(R.style.Theme_NewsApp_Glassy)
                 }
             }
         }

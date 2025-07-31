@@ -20,10 +20,24 @@
         android:layout_height="wrap_content"
         android:text="Choose a Theme"
         android:textColor="?attr/myTitle"
-        android:textSize="24sp"
+        android:textSize="27sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ThemeSelectorContainer"
+        android:orientation="vertical"
+        android:layout_marginTop="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appearanceTitle"
+        tools:ignore="ExtraText"
+        >
+
 
     <LinearLayout
         android:id="@+id/themeSelector"
@@ -173,6 +187,67 @@
                 android:textStyle="bold"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>
+
+
     </LinearLayout>
 
+
+    <LinearLayout
+        android:id="@+id/row2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="3"
+
+        tools:ignore="ExtraText"
+        tools:layout_editor_absoluteX="24dp">
+
+        !-- Glass Theme Block -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardGlass"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/black"
+                app:strokeWidth="1dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="#87EB87"
+                    android:background="@android:color/holo_green_dark">
+                    <ImageView
+                        android:id="@+id/checkGlass"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/check_circle_24dp_orange"
+                        android:visibility="gone"
+                        />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Green"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

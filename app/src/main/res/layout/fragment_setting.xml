@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:text="Setting Fragment"
 
-        android:textSize="28sp"
+        android:textSize="27sp"
         android:textStyle="bold"
         android:textColor="?attr/myTitle"
         app:layout_constraintTop_toTopOf="parent"

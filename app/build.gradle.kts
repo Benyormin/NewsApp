@@ -174,6 +174,8 @@ dependencies {
     //google ads
     implementation("com.google.android.gms:play-services-ads:24.4.0")
 
+    //glass theme
+    implementation ("com.eightbitlab:blurview:1.6.6")
 
 
 }

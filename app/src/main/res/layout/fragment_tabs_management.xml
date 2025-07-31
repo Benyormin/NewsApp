@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Primary"
+    android:background="?attr/myFragmentBackground"
     tools:context=".view.TabsManagementFragment">
 
 
@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My Categories"
-        android:textColor="@color/Secondary"
+        android:textColor="?attr/myTitle"
         android:textSize="27sp"
         android:textStyle="bold"
         android:layout_marginTop="20dp"
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:text="@string/tabManagement"
-        android:textColor="@color/Secondary"
+        android:textColor="?attr/myTitle"
         app:layout_constraintBottom_toTopOf="@+id/btnSports"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnBack" />
@@ -237,7 +237,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
         android:text="My Rss Feeds"
-        android:textColor="@color/Secondary"
+        android:textColor="?attr/myTitle"
         android:textSize="27sp"
         android:textStyle="bold"
         android:layout_marginStart="15dp"
@@ -250,7 +250,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="You can add or remove custom rss URLs"
-        android:textColor="@color/Secondary"
+        android:textColor="?attr/myTitle"
         android:layout_marginStart="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -275,8 +275,8 @@
             android:hint="Enter Name"
             android:minHeight="48dp"
             android:paddingRight="3dp"
-            android:textColor="@color/Secondary"
-            android:textColorHint="@color/Secondary" />
+            android:textColor="?attr/myTitle"
+            android:textColorHint="?attr/onMyFragmentBackground" />
 
         <EditText
             android:id="@+id/etRssUrl"
@@ -287,8 +287,8 @@
             android:inputType="textUri"
             android:minHeight="48dp"
             android:textAllCaps="false"
-            android:textColor="@color/Secondary"
-            android:textColorHint="@color/Secondary" />
+            android:textColor="?attr/onMyFragmentBackground"
+            android:textColorHint="?attr/onMyFragmentBackground" />
 
         <Button
             android:id="@+id/btnAdd"

@@ -23,14 +23,18 @@ import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.android.play.integrity.internal.ad
 
 class AdsManager(
-    private val premiumRepository: PremiumRepository
+    private val premiumRepository: PremiumRepository,
+    val context: Context
 ) {
 
     companion object {
         var shouldShowNativeAd = true
         var adStatus: Boolean = false
+        private var cachedNativeAd: NativeAd? = null
+        private var cachedAdTimestamp: Long = 0L
 
         fun isAdVisible(): Boolean {
             return adStatus
@@ -166,7 +170,7 @@ class AdsManager(
 
     fun loadNativeAd(nativeAdContainer: FrameLayout, _binding: FragmentSettingBinding?, isAdded: Boolean, context: Context, adView: NativeAdView) {
 
-        if (!shouldShowNativeAd) return
+
 
         val adLoader = AdLoader.Builder(context, "ca-app-pub-3940256099942544/2247696110")
             .forNativeAd { nativeAd ->
@@ -213,6 +217,7 @@ class AdsManager(
         // Hide the ad
         nativeAdContainer.removeAllViews()
         shouldShowNativeAd = false
+        cachedNativeAd = null
 
         // Schedule ad to reload after 30 seconds
         Handler(Looper.getMainLooper()).postDelayed({
@@ -223,6 +228,47 @@ class AdsManager(
         }, 30_000) // 30,000 ms = 30 seconds
     }
 
+
+    fun preloadNativeAd(context: Context) {
+        val adLoader = AdLoader.Builder(context, context.getString(R.string.admob_native_id))
+            .forNativeAd { nativeAd ->
+                cachedNativeAd?.destroy() // Clean up old ad
+                cachedNativeAd = nativeAd
+                cachedAdTimestamp = System.currentTimeMillis()
+                Log.d("AdsManager", "Native ad preloaded and cached. Time: $cachedAdTimestamp")
+
+
+            }
+            .withAdListener(object : AdListener() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d("AdsManager", "Native preload failed: ${adError.message}")
+                }
+            })
+            .build()
+
+        adLoader.loadAd(AdRequest.Builder().build())
+    }
+
+    fun showCachedNativeAd(container: FrameLayout, adView: NativeAdView): Boolean {
+        val isExpired = System.currentTimeMillis() - cachedAdTimestamp > 30_000
+        val ad = cachedNativeAd ?: return false
+
+
+        if(isExpired){
+            // more than 30 sec -> refresh and use another Ad
+            Log.d("AdsManager", "Native ad expired. Time: ${System.currentTimeMillis()} - $cachedAdTimestamp")
+            cachedNativeAd?.destroy()
+            cachedNativeAd = null
+            return false
+        }
+
+        populateNativeAdView(ad, adView)
+        container.removeAllViews()
+        container.addView(adView)
+        cachedNativeAd = null
+        preloadNativeAd(context)
+        return true
+    }
 
 
 }

@@ -113,7 +113,7 @@ class HomeFragment : Fragment() {
         //Ads
 
         val premiumRepository = PremiumRepository(requireContext())
-        adsManager = AdsManager(premiumRepository)
+        adsManager = AdsManager(premiumRepository, requireContext())
 
         val params =  binding.tlCategories.layoutParams as ConstraintLayout.LayoutParams
         if (isAdVisible()){

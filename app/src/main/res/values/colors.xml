@@ -7,6 +7,8 @@
     <color name="cardViewBackground">#363C4B</color>
     <color name="headlines">#f5c47c</color>
 
+    <color name="onWhite">#FCF5E5 </color>
+
 
 
     <color name="title">#FF000000</color>
@@ -18,6 +20,8 @@
     <color name="myFragmentBackground">#FFFFFFFF</color>
     <color name="buttonCloseTextColor">@color/white</color>
     <color name="buttonCloseBackground">#6A7C92</color>
+    <color name="glass">#80FFFFFF</color>
+
 
 
 

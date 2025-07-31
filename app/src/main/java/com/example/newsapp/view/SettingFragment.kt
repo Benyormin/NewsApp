@@ -28,6 +28,7 @@ import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.play.integrity.internal.ad
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlin.math.log
 
 /**
  * A simple [Fragment] subclass.
@@ -116,11 +117,24 @@ class SettingFragment : Fragment() {
         //ads logic
 
         val premiumRepository = PremiumRepository(requireContext())
-        val adsManager = AdsManager(premiumRepository)
+        val adsManager = AdsManager(premiumRepository, requireContext())
         val adView = layoutInflater.inflate(R.layout.native_ad_layout, null) as NativeAdView
 
-        adsManager.loadNativeAd(binding.nativeAdContainer, _binding, isAdded, requireContext(), adView )
+        //adsManager.loadNativeAd(binding.nativeAdContainer, _binding, isAdded, requireContext(), adView )
+        val success = adsManager.showCachedNativeAd(binding.nativeAdContainer, adView)
 
+        if (!success) {
+            // fallback -> 1. maybe more than 30 sec passed since last ad
+            // load it now if preload failed or not ready
+            Log.d("AdsManager", "fallback to load native ad")
+            adsManager.loadNativeAd(binding.nativeAdContainer, _binding, isAdded, requireContext(), adView)
+            adsManager.preloadNativeAd(requireContext())
+        } else{
+            //ad loaded successfully
+            Log.d("AdsManager", "Setting Fragment: calling the preload again for the next Ad")
+            //adsManager.preloadNativeAd(requireContext())
+
+        }
 
         val buttonCloseAd = adView.findViewById<Button>(R.id.btnCloseAd)
 

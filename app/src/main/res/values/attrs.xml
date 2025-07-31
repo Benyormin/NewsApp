@@ -13,7 +13,8 @@
     <attr name="searchViewTextColor" format="color"/>
     <attr name="buttonCloseBackground" format="color"/>
     <attr name="buttonCloseTextColor" format="color"/>
-
+    <attr name="onMyFragmentBackground" format="color"/>
+    <attr name="buttonUnselectedBackground" format="color"/>
 
 
 </resources>

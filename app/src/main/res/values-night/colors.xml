@@ -7,6 +7,8 @@
 <color name="cardViewBackground">#444e58</color>
 <color name="headlines">#cccccc</color>
 
+<color name="onWhite">#FCF5E5 </color>
+
 <color name="buttonCloseTextColor">@color/white</color>
 <color name="buttonCloseBackground">#444e58</color>
 
